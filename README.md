@@ -19,7 +19,6 @@
 Clone the repository and manually copy/link the files.
 
 ```sh
-git clone https://github.com/iikovu/green-moss-dotfiles.git ~/green-moss-dotfiles
-cd ~/green-moss-dotfiles
-
+git clone https://github.com/iikovu/dotfiles-green-moss.git
+cd dotfiles-green-moss
 ```
