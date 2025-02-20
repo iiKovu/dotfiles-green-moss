@@ -1,0 +1,65 @@
+[global]
+title = Dunst
+class = Dunst
+monitor = 0
+width = 300
+height = 300
+origin = top-right
+follow = mouse
+indicate_hidden = true
+shrink = yes
+
+transparency = 5
+separator_height = 2
+padding = 8
+horizontal_padding = 11
+frame_width = 2
+frame_color = "#F8BBD000"
+separator_color = "#F8BBD000"
+stack_duplicates = true
+browser = firefox
+
+font = Noto Sans JP 12
+
+line_height = 0
+markup = full
+alignment = center
+
+idle_threshold = 0
+show_age_threshold = 10
+sort = no
+word_wrap = yes
+ignore_newline = no
+stack_duplicates = false
+hide_duplicate_count = yes
+show_indicators = yes
+sticky_history = false
+history_length = 20
+always_run_script = true
+corner_radius = 0
+fullscreen = pushback
+ignore_dbusclose = true
+format = "<b>%s</b>\n%b"
+icon_theme = hicolor
+icon_position = right
+min_icon_size = 48
+max_icon_size = 96
+
+mouse_left_click = do_action
+mouse_middle_click = close_all
+mouse_right_click = close_current
+
+[urgency_low]
+timeout = 6
+background = "#0f0f0f"
+foreground = "#f9f9f9"
+
+[urgency_normal]
+timeout = 6
+background = "#1e1e1e44"
+foreground = "#f9f9f9"
+
+[urgency_critical]
+timeout = 6
+background = "#0f0f0f"
+foreground = "#f9f9f9"
