@@ -1,8 +1,7 @@
-# Green Moss Dotfiles 🎯
+# Green Moss Dotfiles 💚
 
 ![Screenshot](assets/First.png)
 ![Screenshot](assets/Second.png)
-<img src="assets/terminal.png" width="500">
 
 ## Included:
 
