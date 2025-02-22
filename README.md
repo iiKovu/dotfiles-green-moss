@@ -5,7 +5,7 @@
 
 ## Included:
 
-- `Prompt` - Custom prompt with functions and git integration
+- `Prompt` - Custom zsh prompt with functions and git integration
 - `Dunst` - Notification daemon
 - `Kitty` - Terminal emulator
 - `Neofetch` - Config for reference
