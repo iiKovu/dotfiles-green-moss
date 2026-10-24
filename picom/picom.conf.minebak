@@ -1,0 +1,119 @@
+# Backend & Performance
+backend = "glx";
+vsync = true;  # Changed: Helps prevent screen tearing with animations
+unredir-if-possible = true;
+detect-client-leader = true;
+detect-transient = true;
+use-damage = true;
+xrender-sync-fence = true;
+glx-no-stencil = true;
+glx-no-rebind-pixmap = true;
+
+# Corners & Borders
+corner-radius = 0;
+round-borders = 0;
+
+# Shadows (keeping disabled as per your preference)
+shadow = false;
+
+# Fading (optional - subtle fade can enhance animations)
+fading = true;
+fade-in-step = 0.028;
+fade-out-step = 0.028;
+fade-delta = 3;
+no-fading-openclose = false;
+
+# Blur
+blur: {
+  method = "dual_kawase";
+  strength = 5;
+  background = false;
+  background-frame = false;
+  background-fixed = false;
+};
+
+blur-background-exclude = [
+  "class_i = 'slop'",
+  "window_type = 'menu'",
+  "window_type = 'dock'",
+  "window_type = 'desktop'",
+  "window_type = 'popup_menu'",
+  "window_type = 'dropdown_menu'",
+  "_GTK_FRAME_EXTENTS@:c",
+];
+
+# Modern Animations
+animations = ({
+  # Window open - smooth scale and fade in
+  triggers = ["open", "show"];
+  preset = "appear";
+  duration = 0.15;
+  scale = 0.95;
+  opacity = {
+    start = 0.0;
+    end = 1.0;
+    duration = 0.15;
+  };
+},
+{
+  # Window close - smooth scale and fade out
+  triggers = ["close", "hide"];
+  preset = "disappear";
+  duration = 0.12;
+  scale = 0.95;
+  opacity = {
+    start = 1.0;
+    end = 0.0;
+    duration = 0.12;
+  };
+},
+{
+  # Geometry changes - smooth movement/resize
+  triggers = ["geometry"];
+  preset = "geometry-change";
+  duration = 0.25;
+  easing = "cubic-bezier(0.25, 0.1, 0.25, 1.0)";  # Smooth easing
+  scale = {
+    start = 1.0;
+    end = 1.0;
+  };
+  opacity = {
+    start = 1.0;
+    end = 1.0;
+  };
+},
+{
+  # Workspace switching - subtle fade
+  triggers = ["workspace-in"];
+  duration = 0.18;
+  opacity = {
+    start = 0.0;
+    end = 1.0;
+  };
+  offset = {
+    x = { start = -20; end = 0; };
+  };
+},
+{
+  # Workspace out
+  triggers = ["workspace-out"];
+  duration = 0.15;
+  opacity = {
+    start = 1.0;
+    end = 0.0;
+  };
+  offset = {
+    x = { start = 0; end = 20; };
+  };
+})
+
+# Window type settings
+wintypes: {
+  tooltip = { fade = true; shadow = false; focus = true; full-shadow = false; };
+  dock = { shadow = false; clip-shadow-above = true; };
+  dnd = { shadow = false; };
+  popup_menu = { opacity = 1.0; shadow = false; fade = true; };
+  dropdown_menu = { opacity = 1.0; shadow = false; fade = true; };
+  utility = { shadow = false; };
+  notification = { shadow = false; fade = true; };
+};

@@ -1,0 +1,17 @@
+* {
+    background-window:           #10120e;
+    background-card:             #2b2f25;
+    selected:                    #666b57;
+    foreground-normal:           #f3ece4;
+    foreground-muted:            #b8bdac;
+    foreground-selected:         #f3ece4;
+}
+window {
+    background-image:            linear-gradient(to bottom, #10120ee8, #181a15e8);
+}
+element {
+    background-image:            linear-gradient(to bottom, #3a3f33e6, #2b2f25e6);
+}
+element selected.normal {
+    background-image:            linear-gradient(to bottom, #737a63, #666b57);
+}

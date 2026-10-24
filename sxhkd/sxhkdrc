@@ -1,0 +1,232 @@
+##############################
+#    WM Independent Hotkeys  #
+##############################
+
+# Reload sxhkd
+super + Escape
+    kill -USR1 "$SXHKD_PID"
+
+# Terminal Emulator
+super + Return
+    kitty
+
+# Floating kitty terminal
+super + shift + Return
+    id=$(xdotool search --class '^floating-kitty$' 2>/dev/null | head -n1); \
+    if [ -z "$id" ]; then \
+        bspc rule -a floating-kitty -o state=floating sticky=off center=on && kitty --class floating-kitty -o initial_window_width=80c -o initial_window_height=20c; \
+    elif bspc query -N -d focused -n "$id.!hidden" >/dev/null; then \
+        bspc node "$id" -g hidden=on; \
+    else \
+        bspc node "$id" -d focused; bspc node "$id" -g hidden=off -f; \
+    fi
+
+# App Launcher
+super + space
+    rofi -show drun
+
+# Rofi Run
+super + shift + space
+    rofi -show run
+
+# Passwords
+super + z
+    rofi-pass
+
+# Power Menu
+super + x
+    "$HOME/.config/rofi/powermenu/powermenu.sh"
+
+# Rofi AI Chat
+super + p
+    "$HOME/Documents/programs/misa/assistant.sh"
+
+# File Explorer
+super + e
+    kitty -e yazi
+
+# Obsidian
+super + o
+    obsidian
+
+# Send Notification Test
+super + n
+    notify-send 'Hey, this is a test' 'This is a test as well'
+
+# Restart Picom
+super + shift + x
+    "$HOME/Documents/scripts/restartpicom.sh"
+
+# Restart Polybar
+super + shift + z
+    "$HOME/.config/polybar/launch.sh"
+
+# Save fullscreen screenshot
+shift + Print
+    scrot "$HOME/Documents/Pictures/screenshots/Fullscreen/%Y-%m-%d_%H-%M-%S_fullscreen_\$wx\$h.png" && notify-send 'Screenshot Taken' 'Fullscreen'
+
+# Copy selected area to clipboard
+super + shift + s
+    sleep 0.2; scrot -s "/tmp/%Y-%m-%d_%H-%M-%S_selection_\$wx\$h.png" -e '"$$HOME/Documents/scripts/png-clipboard" < "$f" && rm -- "$f"' && notify-send 'Screenshot Taken' 'Area Selection'
+
+# Copy selected area after one second
+super + shift + a
+    sleep 0.2; scrot -s -d 1 "/tmp/%Y-%m-%d_%H-%M-%S_selection_timer_\$wx\$h.png" -e '"$$HOME/Documents/scripts/png-clipboard" < "$f" && rm -- "$f"' && notify-send 'Screenshot Taken' 'Area Selection with Timer'
+
+# Maim (Shadow Window Screenshot)
+super + shift + v
+    file="$HOME/Documents/Pictures/screenshots/Shadow/$(date +%F_%H-%M-%S)_shadow.png"; maim -st 9999999 | magick - \( +clone -background black -shadow 80x3+5+5 \) +swap -background none -layers merge +repage "$file" && notify-send 'Screenshot Taken' 'Shadow Window' -i "$file"
+
+# Clipboard History
+super + v
+    rofi -modi 'clipboard:greenclip print' -show clipboard -run-command '{cmd}'
+
+# Media Control
+XF86AudioRaiseVolume
+    wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+
+XF86AudioLowerVolume
+    wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+
+XF86AudioMute
+    wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+
+XF86AudioPrev
+    playerctl previous
+
+XF86AudioPlay
+    playerctl play-pause
+
+XF86AudioNext
+    playerctl next
+
+# Emojis
+super + period
+    rofimoji
+
+# Fast clicks
+ctrl + alt + i
+    "$HOME/Documents/scripts/fastclick.sh"
+
+#################
+# bspwm Hotkeys #
+#################
+
+# Quit bspwm
+# ctrl + shift + q
+#    bspc quit
+
+# Restart bspwm
+super + shift + r
+    bspc wm -r
+
+# Close and Kill
+super + {_,shift + }w
+    bspc node -{c,k}
+
+# Alternate Between the Tiled and Monocle Layout
+super + m
+    bspc desktop -l next
+
+# Send the Focused Node to the Newest Preselected Node
+super + y
+    bspc node -n newest.!automatic.local && "$HOME/Documents/scripts/move_pointer_on_key.sh"
+    # bspc node newest.marked.local -n newest.!automatic.local
+
+# Swap the Current Node and the Biggest Window
+super + g
+    bspc node -s biggest.local && "$HOME/Documents/scripts/move_pointer_on_key.sh"
+
+###############
+# State/Flags #
+###############
+
+# Set the Window State
+super + {t,shift + t,s,f}
+    bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+# Set the Node Flags
+super + alt + {g,v,b,n,m}
+    bspc node -g {hidden,locked,sticky,private,marked}
+
+# Unhide All Nodes
+super + alt + u
+    "$HOME/Documents/scripts/unhidewindows.sh"
+
+##############
+# Focus/Swap #
+##############
+
+# Focus the Node in the Given Direction
+super + {_,shift + }{h,j,k,l}
+    bspc node -{f,s} {west,south,north,east} && "$HOME/Documents/scripts/move_pointer_on_key.sh"
+
+# Focus the Nalt for the Given Path Jump
+# super + {p,b,comma,period}
+#    bspc node -f @{parent,brother,first,second}
+
+# Focus the Next/Previous Window in the Current Desktop
+super + {_,shift + }c
+    bspc node -f {next,prev}.local.!hidden.window && "$HOME/Documents/scripts/move_pointer_on_key.sh"
+
+# Focus the Next/Previous Desktop in the Current Monitor
+ctrl + alt + {h,l}
+    bspc desktop -f {prev,next}.local
+
+# Focus the Last Node
+alt + Tab
+    bspc node -f last && "$HOME/Documents/scripts/move_pointer_on_key.sh"
+
+# Focus the Last Desktop
+super + Tab
+    bspc desktop -f last
+
+# Focus the Older or Newer Node in the Focus History
+# super + {o,i}
+#    bspc wm -h off; \
+#    bspc node {older,newer} -f; \
+#    bspc wm -h on
+
+# Focus or send to given desktop
+super + {_,shift + }{1-9}
+    bspc {desktop -f,node -d} '{1-9}'
+
+# Preselect the Direction
+super + alt + {h,j,k,l}
+    bspc node -p {west,south,north,east}
+
+# Preselect the Ratio
+# super + ctrl + {1-9}
+#    bspc node -o 0.{1-9}
+
+# Cancel the Preselection for the Focused Node
+super + alt + space
+    bspc node -p cancel
+
+# Cancel the Preselection for the Focused Desktop
+# super + ctrl + shift + space
+#    bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
+
+###############
+# Move/Resize #
+###############
+
+# Expand a Window by Moving One of Its Sides Outward
+super + ctrl + {h,j,k,l}
+    bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+
+# Contract a Window by Moving One of Its Sides Inward
+super + ctrl + alt + {h,j,k,l}
+    bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+# Move a Floating Window
+alt + shift + {h,j,k,l}
+    bspc node -v {-80 0,0 80,0 -80,80 0}
+
+# Balance Layout
+super + b
+    bspc node @/ -B
+
+# Undo Balancing (Equalize Windows)
+super + ctrl + b
+    bspc node @/ -E

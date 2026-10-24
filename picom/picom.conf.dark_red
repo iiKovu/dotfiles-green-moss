@@ -1,0 +1,316 @@
+# Backend & Performance
+backend = "glx";
+vsync = true;
+# Keep fullscreen windows composited. Unredirecting bypasses Picom and prevents
+# show/hide animations from running when switching bspwm desktops.
+unredir-if-possible = false;
+detect-client-leader = true;
+detect-transient = true;
+use-damage = true;
+# This synchronization workaround is mainly needed by some NVIDIA drivers.
+xrender-sync-fence = false;
+
+# Corners & Borders
+corner-radius = 0;
+round-borders = 0;
+
+# Shadows
+shadow = false;
+
+# Fading
+fading = true;
+fade-in-step = 0.028;
+fade-out-step = 0.028;
+fade-delta = 3;
+no-fading-openclose = false;
+
+# Blur
+blur: {
+  method = "dual_kawase";
+  strength = 4;
+};
+
+# Animations
+# Recreates the Oct 2024 showcase (FT-Labs fork: open "zoom", spring mass 0.5,
+# unclamped) with v13 curves: a centre zoom that overshoots slightly, mirrored
+# on close. Workspace show/hide keeps the current fixed-pixel glide.
+animations = ({
+  # Opening a new application: zoom out of the window's centre with overshoot.
+  triggers = ["open"];
+  suppressions = ["geometry"];
+  opacity = {
+    curve = "cubic-bezier(0.22, 1, 0.36, 1)";
+    start = "window-raw-opacity-before";
+    end = "window-raw-opacity";
+    duration = 0.18;
+  };
+  blur-opacity = "opacity";
+  scale-x = {
+    curve = "cubic-bezier(0.34, 1.36, 0.64, 1)";
+    start = 0.5;
+    end = 1.0;
+    duration = 0.32;
+  };
+  scale-y = "scale-x";
+  offset-x = "(1 - scale-x) / 2 * window-width";
+  offset-y = "(1 - scale-y) / 2 * window-height";
+  shadow-opacity = "opacity";
+  shadow-scale-x = "scale-x";
+  shadow-scale-y = "scale-y";
+  shadow-offset-x = "offset-x";
+  shadow-offset-y = "offset-y";
+},
+{
+  # Reveal workspace windows with a fixed-pixel glide. Avoiding percentage
+  # scaling keeps differently sized and slightly staggered windows coherent.
+  triggers = ["show"];
+  suppressions = ["geometry"];
+  opacity = {
+    curve = "cubic-bezier(0.4, 0, 0.2, 1)";
+    start = "window-raw-opacity-before";
+    end = "window-raw-opacity";
+    duration = 0.20;
+  };
+  blur-opacity = "opacity";
+  offset-y = {
+    curve = "cubic-bezier(0.4, 0, 0.2, 1)";
+    start = 22;
+    end = 0;
+    duration = 0.20;
+  };
+  shadow-opacity = "opacity";
+  shadow-offset-y = "offset-y";
+},
+{
+  # Closing an application: zoom back into the centre.
+  triggers = ["close"];
+  suppressions = ["geometry"];
+  opacity = {
+    curve = "cubic-bezier(0.55, 0, 1, 0.45)";
+    start = "window-raw-opacity-before";
+    end = "0";
+    duration = 0.18;
+  };
+  blur-opacity = 0;
+  scale-x = {
+    curve = "cubic-bezier(0.55, 0, 1, 0.45)";
+    start = 1.0;
+    end = 0.6;
+    duration = 0.18;
+  };
+  scale-y = "scale-x";
+  offset-x = "(1 - scale-x) / 2 * window-width";
+  offset-y = "(1 - scale-y) / 2 * window-height";
+  shadow-opacity = "opacity";
+  shadow-scale-x = "scale-x";
+  shadow-scale-y = "scale-y";
+  shadow-offset-x = "offset-x";
+  shadow-offset-y = "offset-y";
+},
+{
+  # Hide workspace windows with the matching fixed-pixel glide.
+  triggers = ["hide"];
+  suppressions = ["geometry"];
+  opacity = {
+    curve = "cubic-bezier(0.4, 0, 0.6, 1)";
+    start = "window-raw-opacity-before";
+    end = 0;
+    duration = 0.18;
+  };
+  blur-opacity = 0;
+  offset-y = {
+    curve = "cubic-bezier(0.4, 0, 0.6, 1)";
+    start = 0;
+    end = -16;
+    duration = 0.18;
+  };
+  shadow-opacity = "opacity";
+  shadow-offset-y = "offset-y";
+},
+{
+  # Tiling moves/resizes: slightly slower than the current 0.22s.
+  triggers = ["geometry"];
+  preset = "geometry-change";
+  duration = 0.28;
+});
+
+# Picom v13 window rules. Later matches override earlier ones.
+rules = ({
+  # Enable blur for transparent windows by default.
+  blur-background = true;
+},
+{
+  # Preserve the old blur exclusions.
+  match = "class_i = 'slop' || window_type = 'menu' || "
+          "window_type = 'dock' || window_type = 'desktop' || "
+          "window_type = 'popup_menu' || window_type = 'dropdown_menu' || "
+          "_GTK_FRAME_EXTENTS@";
+  blur-background = false;
+},
+{
+  match = "window_type = 'dock'";
+  shadow = false;
+  clip-shadow-above = true;
+},
+{
+  match = "window_type = 'desktop' || window_type = 'dnd' || "
+          "window_type = 'utility'";
+  shadow = false;
+},
+{
+  # Menus should feel immediate and avoid the larger normal-window zoom.
+  match = "window_type = 'menu' || window_type = 'popup_menu' || "
+          "window_type = 'dropdown_menu' || window_type = 'combo'";
+  opacity = 1.0;
+  shadow = false;
+  animations = ({
+    triggers = ["open", "show"];
+    suppressions = ["geometry"];
+    preset = "appear";
+    scale = 0.97;
+    duration = 0.12;
+  },
+  {
+    triggers = ["close", "hide"];
+    suppressions = ["geometry"];
+    preset = "disappear";
+    scale = 0.97;
+    duration = 0.10;
+  });
+},
+{
+  match = "window_type = 'tooltip'";
+  shadow = false;
+  full-shadow = false;
+  animations = ({
+    triggers = ["open", "show"];
+    suppressions = ["geometry"];
+    preset = "appear";
+    scale = 0.98;
+    duration = 0.10;
+  },
+  {
+    triggers = ["close", "hide"];
+    suppressions = ["geometry"];
+    preset = "disappear";
+    scale = 0.98;
+    duration = 0.08;
+  });
+},
+{
+  match = "window_type = 'notification'";
+  shadow = false;
+  animations = ({
+    triggers = ["open", "show"];
+    suppressions = ["geometry"];
+    preset = "appear";
+    scale = 0.97;
+    duration = 0.14;
+  },
+  {
+    triggers = ["close", "hide"];
+    suppressions = ["geometry"];
+    preset = "disappear";
+    scale = 0.97;
+    duration = 0.11;
+  });
+},
+{
+  # Rofi benefits from a slightly more deliberate transition than small menus.
+  match = "class_g = 'Rofi' || class_i = 'rofi'";
+  shadow = false;
+  animations = ({
+    triggers = ["open", "show"];
+    suppressions = ["geometry"];
+    preset = "appear";
+    scale = 0.96;
+    duration = 0.2;
+  },
+  {
+    triggers = ["close", "hide"];
+    suppressions = ["geometry"];
+    preset = "disappear";
+    scale = 0.97;
+    duration = 0.12;
+  });
+},
+{
+  # Scaling a fullscreen window exposes the desktop around its edges, so use
+  # a clean fade while retaining workspace-switch animations.
+  match = "fullscreen";
+  corner-radius = 0;
+  unredir = false;
+  animations = ({
+    triggers = ["open"];
+    suppressions = ["geometry"];
+    opacity = {
+      curve = "cubic-bezier(0.4, 0, 0.2, 1)";
+      start = "window-raw-opacity-before";
+      end = "window-raw-opacity";
+      duration = 0.24;
+    };
+    blur-opacity = 0;
+    shadow-opacity = "opacity";
+  },
+  {
+    # Match regular workspace timing so fullscreen windows do not snap in.
+    triggers = ["show"];
+    suppressions = ["geometry"];
+    opacity = {
+      curve = "cubic-bezier(0.4, 0, 0.2, 1)";
+      start = "window-raw-opacity-before";
+      end = "window-raw-opacity";
+      duration = 0.20;
+    };
+    blur-opacity = 0;
+    shadow-opacity = "opacity";
+  },
+  {
+    triggers = ["close"];
+    suppressions = ["geometry"];
+    opacity = {
+      curve = "cubic-bezier(0.4, 0, 0.6, 1)";
+      start = "window-raw-opacity-before";
+      end = 0;
+      duration = 0.18;
+    };
+    blur-opacity = 0;
+    shadow-opacity = "opacity";
+  },
+  {
+    triggers = ["hide"];
+    suppressions = ["geometry"];
+    opacity = {
+      curve = "cubic-bezier(0.4, 0, 0.6, 1)";
+      start = "window-raw-opacity-before";
+      end = 0;
+      duration = 0.18;
+    };
+    blur-opacity = 0;
+    shadow-opacity = "opacity";
+  });
+},
+{
+  # Dialogs (showcase "slide-down" for transient windows): drop in from the
+  # top of the screen and settle with a small overshoot.
+  match = "window_type = 'dialog'";
+  animations = ({
+    triggers = ["open", "show"];
+    suppressions = ["geometry"];
+    opacity = {
+      curve = "cubic-bezier(0.22, 1, 0.36, 1)";
+      start = "window-raw-opacity-before";
+      end = "window-raw-opacity";
+      duration = 0.2;
+    };
+    blur-opacity = "opacity";
+    offset-y = {
+      curve = "cubic-bezier(0.34, 1.2, 0.64, 1)";
+      start = "-window-y - window-height";
+      end = 0;
+      duration = 0.34;
+    };
+    shadow-opacity = "opacity";
+    shadow-offset-y = "offset-y";
+  });
+});

@@ -1,0 +1,53 @@
+backend = "glx";
+vsync = true;  # Enable vsync for smoother animations
+unredir-if-possible = true;
+detect-client-leader = true;
+detect-transient = true;
+use-damage = true;
+xrender-sync-fence = true;
+corner-radius = 0;
+
+# Enable fading for smoother transitions
+fade = true;
+fade-in-step = 0.03;
+fade-out-step = 0.03;
+fade-delta = 3;
+
+shadow = false;
+
+blur:
+{
+	kernel = "3x3box";
+	method = "dual_kawase";
+	size = 4;
+	strength = 5;
+	deviation = 10.0;
+};
+
+blur-background-exclude = [
+	"class_i = 'slop'",
+	"window_type = 'menu'",
+	"window_type = 'dock'",
+	"window_type = 'desktop'",
+	"window_type = 'popup_menu'",
+];
+
+animations = (
+	{
+		triggers = [ "open", "show" ];
+		preset = "slide-in";
+		direction = "down";
+		duration = 0.3;
+	},
+	{
+		triggers = [ "close", "hide" ];
+		preset = "slide-out";
+		direction = "up";
+		duration = 0.25;
+	},
+	{
+		triggers = [ "geometry" ];
+		preset = "geometry-change";
+		duration = 0.4;
+	},
+)

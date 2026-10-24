@@ -1,0 +1,141 @@
+# vim:fileencoding=utf-8:foldmethod=marker
+
+# : Manager {{{
+
+[mgr]
+cwd = { fg = "#ebe1d5" }
+# Find
+find_keyword = { fg = "#e8a0a0", italic = true }
+find_position = { fg = "#e8a0a0", bg = "reset", italic = true }
+# Marker
+marker_selected = { fg = "#e06666", bg = "#baadad" }
+marker_copied = { fg = "#742222", bg = "#e06666" }
+marker_cut = { fg = "#e0a866", bg = "#a98aa2" }
+# Border
+border_symbol = "│"
+border_style = { fg = "#8c7272" }
+
+# : }}}
+
+# : Tabs {{{
+
+[tabs]
+active = { fg = "#1c1010", bg = "#baadad" }
+inactive = { fg = "#ebe1d5", bg = "#3a2020" }
+
+# : }}}
+
+# : Mode {{{
+
+[mode]
+normal_main = { fg = "#140b0b", bg = "#d45a5a", bold = true }
+normal_alt = { fg = "#d45a5a", bg = "#3a2020" }
+select_main = { fg = "#140b0b", bg = "#d45a5a", bold = true }
+select_alt = { fg = "#d45a5a", bg = "#3a2020" }
+unset_main = { fg = "#140b0b", bg = "#d45a5a", bold = true }
+unset_alt = { fg = "#d45a5a", bg = "#3a2020" }
+
+# : }}}
+
+# : Status bar {{{
+
+[status]
+# Permissions
+perm_sep = { fg = "#8c7272" }
+perm_type = { fg = "#ebe1d5" }
+perm_read = { fg = "#ebe1d5" }
+perm_write = { fg = "#c24a4a" }
+perm_exec = { fg = "#c24a4a" }
+# Progress
+progress_label = { fg = "#ffffff", bold = true }
+progress_normal = { fg = "#9a3a3a", bg = "#3a2020" }
+progress_error = { fg = "#ff5555", bg = "#3a2020" }
+
+# : }}}
+
+# : Input {{{
+
+[input]
+border = { fg = "#ebe1d5" }
+title = {  }
+value = {  }
+selected = { reversed = true }
+
+# : }}}
+
+# : Pick {{{
+
+[pick]
+border = { fg = "#ebe1d5" }
+active = { fg = "#e8a0a0" }
+inactive = {  }
+
+# : }}}
+
+# : Completion {{{
+
+[cmp]
+border = { fg = "#ebe1d5" }
+
+# : }}}
+
+# : Tasks {{{
+
+[tasks]
+border = { fg = "#ebe1d5" }
+title = {  }
+
+# : }}}
+
+# : Which {{{
+
+[which]
+mask = { bg = "#000000" }
+cand = { fg = "#a9bdb8" }
+rest = { fg = "#8c7272" }
+desc = { fg = "#e8a0a0" }
+separator = "  "
+separator_style = { fg = "#e8a0a0" }
+
+# : }}}
+
+# : Help {{{
+
+[help]
+on = { fg = "#baadad" }
+run = { fg = "#baadad" }
+footer = { fg = "#140b0b", bg = "#d08a9a" }
+
+# : }}}
+
+# : File-specific styles {{{
+
+[filetype]
+rules = [
+  # Images
+  { mime = "image/*", fg = "#baadad" },
+  # Videos
+  { mime = "video/*", fg = "#baadad" },
+  { mime = "audio/*", fg = "#baadad" },
+  # Archives
+  { mime = "application/zip", fg = "#e8a0a0" },
+  { mime = "application/gzip", fg = "#e8a0a0" },
+  { mime = "application/x-tar", fg = "#e8a0a0" },
+  { mime = "application/x-bzip", fg = "#e8a0a0" },
+  { mime = "application/x-bzip2", fg = "#e8a0a0" },
+  { mime = "application/x-7z-compressed", fg = "#e8a0a0" },
+  { mime = "application/x-rar", fg = "#e8a0a0" },
+  # Fallback
+  { url = "*", fg = "#ebe1d5" },
+  { url = "*/", fg = "#d45a5a" },
+]
+
+# : }}}
+
+[icon]
+conds = [
+  # Fallback
+  { if = "dir", text = "", fg = "#d45a5a" },
+  { if = "exec", text = "", fg = "#e0a866" },
+  { if = "!dir", text = "", fg = "#ebe1d5" },
+]

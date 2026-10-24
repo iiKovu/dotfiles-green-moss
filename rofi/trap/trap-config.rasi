@@ -1,0 +1,74 @@
+/*****----- Configuration -----*****/
+configuration {
+    show-icons:                 false;
+    hover-select:               false;
+    me-select-entry:            "";
+    me-accept-entry:            "";
+}
+
+/*****----- Global Properties -----*****/
+* {
+    background-window:           #1a0000ee;
+    foreground-normal:           #ff4444;
+    prompt-font:                 "Noto Sans JP Bold 80";
+    textbox-font:                "Noto Sans JP 24";
+}
+
+/*****----- Main Window -----*****/
+window {
+    transparency:                "real";
+    location:                    center;
+    anchor:                      center;
+    fullscreen:                  true;
+    cursor:                      "default";
+    background-color:            var(background-window);
+}
+
+/*****----- Main Box -----*****/
+mainbox {
+    enabled:                     true;
+    spacing:                     30px;
+    background-color:            transparent;
+    children:                    [ "dummy", "inputbar", "message", "dummy" ];
+}
+
+/*****----- Inputbar -----*****/
+inputbar {
+    enabled:                     true;
+    background-color:            transparent;
+    children:                    [ "dummy", "prompt", "dummy"];
+}
+
+dummy {
+    background-color:            transparent;
+}
+
+prompt {
+    enabled:                     true;
+    font:                        var(prompt-font);
+    background-color:            transparent;
+    text-color:                  var(foreground-normal);
+}
+
+/*****----- Message -----*****/
+message {
+    enabled:                     true;
+    margin:                      0px 400px;
+    padding:                     20px;
+    border-radius:               15px;
+    background-color:            #ffffff10;
+    text-color:                  #ffffff88;
+}
+
+textbox {
+    font:                        var(textbox-font);
+    background-color:            transparent;
+    text-color:                  inherit;
+    vertical-align:              0.5;
+    horizontal-align:            0.5;
+}
+
+/*****----- Hide Listview -----*****/
+listview {
+    enabled:                     false;
+}

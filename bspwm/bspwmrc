@@ -1,0 +1,159 @@
+#! /bin/sh
+
+###############################################################################
+#                             Monitor Setup                                 #
+###############################################################################
+
+XRANDR_STATE=$(xrandr --query)
+
+has_dp0=false
+has_hdmi=false
+printf '%s\n' "$XRANDR_STATE" | grep -q '^DisplayPort-0 connected' && has_dp0=true
+printf '%s\n' "$XRANDR_STATE" | grep -q '^HDMI-A-0 connected' && has_hdmi=true
+
+# Primary Monitor Configuration
+xrandr --output DisplayPort-1 --primary --mode 2560x1440 --rotate normal --rate 170
+xrandr --output DisplayPort-0 --off
+xrandr --output HDMI-A-0 --off
+
+$has_dp0 && xrandr --output DisplayPort-0 --mode 1920x1080 --rotate right --rate 144 --left-of DisplayPort-1
+$has_hdmi && xrandr --output HDMI-A-0 --mode 1920x1080 --rotate normal --rate 60 --above DisplayPort-1
+
+###############################################################################
+#                                Workspaces                                   #
+###############################################################################
+
+bspc monitor DisplayPort-1 -d 1 2 3 4 5
+
+monitor_order="DisplayPort-1"
+
+if $has_dp0; then
+    bspc monitor DisplayPort-0 -d 6 7
+    monitor_order="$monitor_order DisplayPort-0"
+fi
+
+if $has_hdmi; then
+    bspc monitor HDMI-A-0 -d 8 9
+    monitor_order="$monitor_order HDMI-A-0"
+fi
+
+# Monitor Order
+bspc wm -O $monitor_order
+
+###############################################################################
+#                               Compositor                                    #
+###############################################################################
+
+~/Documents/scripts/restartpicom.sh
+
+###############################################################################
+#                                Keybinds                                     #
+###############################################################################
+
+pgrep -x sxhkd >/dev/null || { SXHKD_SHELL=/bin/sh sxhkd & }
+
+###############################################################################
+#                              General Settings                               #
+###############################################################################
+
+xsetroot -cursor_name left_ptr &
+xset r rate 400 100 &
+
+###############################################################################
+#                                 Wallpaper                                   #
+###############################################################################
+
+~/Documents/scripts/wallpaper.sh
+
+###############################################################################
+#                                  Bar                                        #
+###############################################################################
+
+bspc config top_padding 0
+bspc config bottom_padding 0
+bspc config right_padding 0
+bspc config left_padding 0
+
+(
+    "${XDG_CONFIG_HOME:-$HOME/.config}/polybar/launch.sh"
+) &
+
+###############################################################################
+#                               Notifications                                 #
+###############################################################################
+
+pgrep -x dunst >/dev/null || { dunst & }
+
+###############################################################################
+#                             Power Management                                #
+###############################################################################
+
+xset s off &
+xset -dpms &
+
+###############################################################################
+#                              Clipboard Manager                              #
+###############################################################################
+
+pgrep -x greenclip >/dev/null || { greenclip daemon & }
+
+###############################################################################
+#                                Autostart                                    #
+###############################################################################
+
+pgrep -x steam >/dev/null || { steam -silent & }
+
+pgrep -x easyeffects >/dev/null || { easyeffects --service-mode --hide-window & }
+
+pgrep -x udiskie >/dev/null || { udiskie --smart-tray & }
+
+# MISA activity logger (records active-window focus for "what did I do" recall)
+#pgrep -f "activity/logger.py" >/dev/null || { python3 "$HOME/Documents/programs/misa/activity/logger.py" & }
+
+###############################################################################
+#                            Border Configuration                             #
+###############################################################################
+
+# Window Borders and Gaps
+bspc config border_width 1
+bspc config window_gap 5
+
+# Window Splitting and Monocle Mode
+bspc config split_ratio 0.5
+bspc config borderless_monocle false
+bspc config gapless_monocle false
+bspc config single_monocle true
+
+# Pointer and Focus Behavior
+bspc config pointer_follows_focus false
+bspc config pointer_follows_monitor false
+bspc config focus_follows_pointer true
+bspc config pointer_modifier mod1
+bspc config pointer_action1 move
+bspc config pointer_action2 resize_side
+bspc config pointer_action3 resize_corner
+
+# Monitor Options
+bspc config remove_disabled_monitors true
+bspc config merge_overlapping_monitors true
+
+###############################################################################
+#                                Border Colors                                #
+###############################################################################
+
+# Set Border Colors for Focused and Normal Windows
+. ~/.config/themes/current/preset.sh
+bspc config focused_border_color "$BORDER_FOCUSED"
+bspc config normal_border_color "$BORDER_NORMAL"
+
+###############################################################################
+#                                   Rules                                     #
+###############################################################################
+
+# Clear existing rules to prevent duplicates on reload
+bspc rule -r '*'
+
+# Set Rules for Specific Applications
+bspc rule -a "pwvucontrol" state=floating
+bspc rule -a "Blueman-manager" state=floating
+bspc rule -a "lact" state=floating
