@@ -1,9 +1,4 @@
 #!/usr/bin/env bash
-# Color presets live in ~/.config/themes/<name>/; ~/.config/themes/current
-# points at the active one and every app reads its colors from there.
-#
-#   theme.sh           list presets (* marks the active one)
-#   theme.sh <name>    switch preset and reload everything running
 
 themes="${XDG_CONFIG_HOME:-$HOME/.config}/themes"
 active=$(readlink "$themes/current")
@@ -17,11 +12,13 @@ if [[ $# -eq 0 ]]; then
     exit 0
 fi
 
-[[ -d "$themes/$1" && $1 != current ]] || { echo "theme: no preset '$1'" >&2; exit 1; }
+[[ -d "$themes/$1" && $1 != current ]] || {
+    echo "theme: no preset '$1'" >&2
+    exit 1
+}
 ln -sfn "$1" "$themes/current"
 . "$themes/current/preset.sh"
 
-# GTK apps use the fixed theme name Orchis-Preset; point it at this preset's theme
 gtk="${XDG_DATA_HOME:-$HOME/.local/share}/themes"
 [[ -d "$gtk/$GTK_NAME" ]] && target="$gtk/$GTK_NAME" || target="/usr/share/themes/$GTK_NAME"
 [[ -d $target ]] && ln -sfn "$target" "$gtk/Orchis-Preset" ||
