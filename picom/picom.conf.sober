@@ -27,29 +27,31 @@ no-fading-openclose = false;
 # Blur
 blur: {
   method = "dual_kawase";
-  strength = 4;
+  strength = 5;
 };
 
 # Animations
-# Recreates the Oct 2024 showcase (FT-Labs fork: open "zoom", spring mass 0.5,
-# unclamped) with v13 curves: a centre zoom that overshoots slightly, mirrored
-# on close. Workspace show/hide keeps the current fixed-pixel glide.
 animations = ({
-  # Opening a new application: zoom out of the window's centre with overshoot.
+  # Opening a new application: centered fade and scale.
   triggers = ["open"];
   suppressions = ["geometry"];
   opacity = {
     curve = "cubic-bezier(0.22, 1, 0.36, 1)";
     start = "window-raw-opacity-before";
     end = "window-raw-opacity";
-    duration = 0.18;
+    duration = 0.16;
   };
-  blur-opacity = "opacity";
+  blur-opacity = {
+    curve = "cubic-bezier(0.22, 1, 0.36, 1)";
+    start = "window-raw-opacity-before";
+    end = "window-raw-opacity";
+    duration = 0.16;
+  };
   scale-x = {
-    curve = "cubic-bezier(0.34, 1.36, 0.64, 1)";
-    start = 0.5;
+    curve = "cubic-bezier(0.22, 1, 0.36, 1)";
+    start = 0.96;
     end = 1.0;
-    duration = 0.32;
+    duration = 0.20;
   };
   scale-y = "scale-x";
   offset-x = "(1 - scale-x) / 2 * window-width";
@@ -71,7 +73,12 @@ animations = ({
     end = "window-raw-opacity";
     duration = 0.20;
   };
-  blur-opacity = "opacity";
+  blur-opacity = {
+    curve = "cubic-bezier(0.4, 0, 0.2, 1)";
+    start = "window-raw-opacity-before";
+    end = "window-raw-opacity";
+    duration = 0.20;
+  };
   offset-y = {
     curve = "cubic-bezier(0.4, 0, 0.2, 1)";
     start = 22;
@@ -82,21 +89,21 @@ animations = ({
   shadow-offset-y = "offset-y";
 },
 {
-  # Closing an application: zoom back into the centre.
+  # Closing an application: retain the centered fade and scale.
   triggers = ["close"];
   suppressions = ["geometry"];
   opacity = {
     curve = "cubic-bezier(0.55, 0, 1, 0.45)";
     start = "window-raw-opacity-before";
     end = "0";
-    duration = 0.18;
+    duration = 0.14;
   };
   blur-opacity = 0;
   scale-x = {
     curve = "cubic-bezier(0.55, 0, 1, 0.45)";
     start = 1.0;
-    end = 0.6;
-    duration = 0.18;
+    end = 0.96;
+    duration = 0.14;
   };
   scale-y = "scale-x";
   offset-x = "(1 - scale-x) / 2 * window-width";
@@ -128,10 +135,9 @@ animations = ({
   shadow-offset-y = "offset-y";
 },
 {
-  # Tiling moves/resizes: slightly slower than the current 0.22s.
   triggers = ["geometry"];
   preset = "geometry-change";
-  duration = 0.28;
+  duration = 0.22;
 });
 
 # Picom v13 window rules. Later matches override earlier ones.
@@ -288,29 +294,5 @@ rules = ({
     };
     blur-opacity = 0;
     shadow-opacity = "opacity";
-  });
-},
-{
-  # Dialogs (showcase "slide-down" for transient windows): drop in from the
-  # top of the screen and settle with a small overshoot.
-  match = "window_type = 'dialog'";
-  animations = ({
-    triggers = ["open", "show"];
-    suppressions = ["geometry"];
-    opacity = {
-      curve = "cubic-bezier(0.22, 1, 0.36, 1)";
-      start = "window-raw-opacity-before";
-      end = "window-raw-opacity";
-      duration = 0.2;
-    };
-    blur-opacity = "opacity";
-    offset-y = {
-      curve = "cubic-bezier(0.34, 1.2, 0.64, 1)";
-      start = "-window-y - window-height";
-      end = 0;
-      duration = 0.34;
-    };
-    shadow-opacity = "opacity";
-    shadow-offset-y = "offset-y";
   });
 });
