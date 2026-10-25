@@ -9,7 +9,6 @@ end
 
 __set_tide_uvar VIRTUAL_ENV_DISABLE_PROMPT true
 __set_tide_uvar tide_context_always_display true
-__set_tide_uvar tide_context_bg_color magenta
 __set_tide_uvar tide_context_color_default FFFFFF
 __set_tide_uvar tide_context_color_root FFFFFF
 __set_tide_uvar tide_context_color_ssh FFFFFF
@@ -25,16 +24,11 @@ __set_tide_uvar tide_prompt_color_frame_and_connection 6C6C6C
 __set_tide_uvar tide_prompt_icon_connection ' '
 __set_tide_uvar tide_prompt_pad_items true
 __set_tide_uvar tide_prompt_transient_enabled false
-__set_tide_uvar tide_pwd_bg_color black
 __set_tide_uvar tide_pwd_color_anchors FFFFFF
 __set_tide_uvar tide_pwd_color_dirs FFFFFF
 __set_tide_uvar tide_pwd_color_truncated_dirs BCBCBC
-__set_tide_uvar tide_python_bg_color black
 __set_tide_uvar tide_python_color FFFFFF
 __set_tide_uvar tide_python_icon ''
-__set_tide_uvar tide_git_bg_color brcyan
-__set_tide_uvar tide_git_bg_color_unstable brcyan
-__set_tide_uvar tide_git_bg_color_urgent brcyan
 __set_tide_uvar tide_git_color_branch FFFFFF
 __set_tide_uvar tide_git_color_dirty FFFFFF
 __set_tide_uvar tide_git_color_staged FFFFFF
@@ -57,4 +51,5 @@ __set_tide_uvar tide_character_vi_icon_default '⯈'
 __set_tide_uvar tide_character_vi_icon_replace '⯈'
 __set_tide_uvar tide_character_vi_icon_visual '⯈'
 
+source ~/.config/themes/current/fish.fish
 functions -e __set_tide_uvar
