@@ -1,6 +1,6 @@
 status is-interactive; or return
 
-# Named ANSI colours, so fish follows the active theme preset's kitty palette.
+# Named ANSI colors, so fish follows the active theme preset's kitty palette.
 # Set as global (not universal) so they live here in a tracked file
 # instead of the untracked fish_variables, and re-apply every session.
 

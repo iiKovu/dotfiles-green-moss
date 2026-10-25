@@ -5,7 +5,7 @@
 
 ## Palette
 
-| Role       | Colour |
+| Role       | Color |
 | ---------- | ------ |
 | Background | `#10120e` |
 | Foreground | `#f3ece4` |

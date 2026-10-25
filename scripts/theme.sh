@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Colour presets live in ~/.config/themes/<name>/; ~/.config/themes/current
-# points at the active one and every app reads its colours from there.
+# Color presets live in ~/.config/themes/<name>/; ~/.config/themes/current
+# points at the active one and every app reads its colors from there.
 #
 #   theme.sh           list presets (* marks the active one)
 #   theme.sh <name>    switch preset and reload everything running

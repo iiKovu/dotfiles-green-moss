@@ -3,7 +3,7 @@ return {
 	ft = "markdown",
 
 	config = function(_, opts)
-		-- Derive colours from noirbuddy
+		-- Derive colors from noirbuddy
 		local function set_markdown_colors()
 			local c = require("noirbuddy.colors").all()
 			local pink, soft_pink = c.primary, vim.g.theme_soft or "#ff99cc"

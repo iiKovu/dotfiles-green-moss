@@ -22,7 +22,7 @@ horizontal_padding = 20
 text_icon_padding = 14
 frame_width = 1
 
-# Colours: ~/.config/dunst/dunstrc.d/50-theme.conf (active preset)
+# Colors: ~/.config/dunst/dunstrc.d/50-theme.conf (active preset)
 separator_height = 0
 separator_color = frame
 corner_radius = 12

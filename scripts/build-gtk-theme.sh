@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Build an Orchis GTK theme recoloured for a preset:
+# Build an Orchis GTK theme recolored for a preset:
 #   build-gtk-theme.sh dark_red  ->  ~/.local/share/themes/Orchis-dark_red
-# Colours come from the GTK_* variables in ~/.config/themes/<name>/preset.sh.
+# Colors come from the GTK_* variables in ~/.config/themes/<name>/preset.sh.
 
 set -eu
 

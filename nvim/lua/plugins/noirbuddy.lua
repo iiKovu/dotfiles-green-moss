@@ -4,7 +4,7 @@ return {
 	lazy = false,
 	priority = 1000,
 	config = function()
-		-- Colours from the active preset (~/.config/themes/current/nvim.lua)
+		-- Colors from the active preset (~/.config/themes/current/nvim.lua)
 		local ok, theme = pcall(dofile, vim.fn.expand("~/.config/themes/current/nvim.lua"))
 		if not ok then
 			theme = { primary = "#ff0088", soft = "#ff99cc", background = "" }
