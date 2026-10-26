@@ -1,0 +1,72 @@
+/* Ported from polybar/config.ini. Colors: the active preset's waybar.css */
+@import url("../themes/current/waybar.css");
+
+* {
+  font-family: "Iosevka", "Liga SFMono Nerd Font", "Font Awesome 7 Free";
+  font-size: 12px;
+  font-weight: bold;
+  min-height: 0;
+  border: none;
+  border-radius: 0;
+}
+
+window#waybar {
+  color: @foreground;
+  background: @background;
+}
+window#waybar.second {
+  background: @popup;
+}
+window#waybar.third {
+  background: #000000;
+}
+
+.modules-left,
+.modules-right {
+  padding: 0 18px;
+}
+window#waybar.second .modules-left,
+window#waybar.second .modules-right {
+  padding: 0 12px;
+}
+
+/* Workspaces: kanji in Noto CJK, underline like polybar's line-size = 2 */
+#workspaces button {
+  font-family: "Noto Sans CJK JP";
+  font-size: 13px;
+  padding: 0 8px;
+  color: @foreground_dim;
+  background: transparent;
+  box-shadow: inset 0 -2px @accent_muted;
+}
+#workspaces button.active {
+  color: @foreground;
+  box-shadow: inset 0 -2px @accent;
+}
+#workspaces button.urgent {
+  color: @red;
+  box-shadow: inset 0 -2px @red;
+}
+#workspaces button:hover {
+  background: transparent;
+}
+window#waybar.third #workspaces button.active {
+  box-shadow: inset 0 -1px @white;
+}
+
+#custom-sps {
+  color: @sepcolor;
+}
+
+#pulseaudio.muted {
+  color: @foreground_dim;
+}
+#cpu.warning,
+#memory.warning {
+  color: @red;
+}
+
+tooltip {
+  background: @background_alt;
+  color: @foreground;
+}

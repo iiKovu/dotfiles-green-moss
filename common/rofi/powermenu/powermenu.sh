@@ -54,7 +54,11 @@ case "$chosen" in
 	systemctl suspend
 	;;
 "$logout")
-	bspc quit
+	if [[ -n $HYPRLAND_INSTANCE_SIGNATURE ]]; then
+		hyprctl dispatch 'hl.dsp.exit()'
+	else
+		bspc quit
+	fi
 	;;
 "$theme")
 	chosen_theme="$(pick_theme)"

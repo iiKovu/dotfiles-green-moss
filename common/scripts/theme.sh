@@ -29,6 +29,10 @@ if pgrep -x bspwm >/dev/null; then
     bspc config normal_border_color "$BORDER_NORMAL"
     "$HOME/Documents/scripts/x11/wallpaper.sh"
     "$themes/../polybar/launch.sh" >/dev/null 2>&1 &
+elif pgrep -x Hyprland >/dev/null; then
+    hyprctl reload >/dev/null # hypr/preset.lua re-reads the preset
+    "$HOME/Documents/scripts/wayland/wallpaper.sh" >/dev/null
+    pkill -USR2 -x waybar # reload style (re-imports the preset colors)
 fi
 pkill -USR1 -x kitty
 pgrep -x dunst >/dev/null && dunstctl reload

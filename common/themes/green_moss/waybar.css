@@ -1,0 +1,11 @@
+/* green_moss colors for waybar, from polybar.ini */
+@define-color background rgba(0, 0, 0, 0.000);
+@define-color background_alt #1A1C16;
+@define-color foreground #EBE1D5;
+@define-color foreground_dim #2B2F25;
+@define-color accent #E5DCD0;
+@define-color accent_muted #4A4E40;
+@define-color red #D4888A;
+@define-color white #FFFFFF;
+@define-color sepcolor #575C4A;
+@define-color popup rgba(16, 18, 14, 0.867);

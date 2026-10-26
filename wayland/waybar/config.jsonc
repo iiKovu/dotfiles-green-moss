@@ -1,0 +1,37 @@
+// Ported from polybar/config.ini: one bar per monitor, same modules.
+// Colors come from the active preset (style.css imports themes/current/waybar.css).
+[
+  {
+    "name": "top",
+    "output": "DP-2",
+    "layer": "top",
+    "position": "top",
+    "height": 37,
+    "modules-left": ["pulseaudio", "custom/sps#1", "cpu", "custom/sps#2", "memory", "custom/sps#3", "hyprland/language"],
+    "modules-center": ["hyprland/workspaces"],
+    "modules-right": ["hyprland/window", "custom/sps#4", "clock#date", "custom/sps#5", "clock", "custom/sps#6", "group/tray"],
+    "include": ["~/.config/waybar/modules.jsonc"]
+  },
+  {
+    "name": "second",
+    "output": "DP-1",
+    "layer": "top",
+    "position": "top",
+    "height": 31,
+    "modules-left": ["pulseaudio", "custom/sps#1", "hyprland/window"],
+    "modules-center": ["hyprland/workspaces"],
+    "modules-right": ["clock", "custom/sps#2", "clock#date"],
+    "include": ["~/.config/waybar/modules.jsonc"]
+  },
+  {
+    "name": "third",
+    "output": "HDMI-A-1",
+    "layer": "top",
+    "position": "top",
+    "height": 41,
+    "modules-left": ["hyprland/window", "custom/sps#1", "pulseaudio"],
+    "modules-center": ["hyprland/workspaces"],
+    "modules-right": ["clock"],
+    "include": ["~/.config/waybar/modules.jsonc"]
+  }
+]

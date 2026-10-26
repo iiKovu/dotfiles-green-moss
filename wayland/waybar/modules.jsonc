@@ -1,0 +1,76 @@
+// Module definitions shared by every bar in config.jsonc
+{
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "1": "火", "2": "水", "3": "山", "4": "六", "5": "千",
+      "6": "♛", "7": "♚", "8": "⏾", "9": "☀"
+    },
+    "on-scroll-up": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"m+1\" })' >/dev/null",
+    "on-scroll-down": "hyprctl dispatch 'hl.dsp.focus({ workspace = \"m-1\" })' >/dev/null"
+  },
+
+  "hyprland/window": {
+    "format": "{class}",
+    "max-length": 30,
+    "separate-outputs": true
+  },
+
+  "hyprland/language": {
+    "format": "󰌌  {}"
+  },
+
+  "pulseaudio": {
+    "format": "󰕾 {volume}%",
+    "format-muted": "󰝟 MUTE",
+    "on-click-right": "pwvucontrol",
+    "tooltip": false
+  },
+
+  "cpu": {
+    "interval": 2,
+    "format": "󰍛 {usage}%",
+    "states": { "warning": 95 },
+    "on-click": "kitty -e htop",
+    "tooltip": false
+  },
+
+  "memory": {
+    "interval": 3,
+    "format": "󰻟 {percentage}%",
+    "states": { "warning": 95 },
+    "on-click": "kitty -e htop",
+    "tooltip": false
+  },
+
+  // Time (polybar "date")
+  "clock": {
+    "interval": 30,
+    "format": "{:%H:%M}",
+    "tooltip": false
+  },
+
+  // Date with a month calendar on hover (replaces the yad popup)
+  "clock#date": {
+    "interval": 60,
+    "format": "{:%D}",
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "calendar": { "mode": "month" }
+  },
+
+  // Tray hidden behind a toggle icon, like polybar's tray-toggle
+  "group/tray": {
+    "orientation": "inherit",
+    "drawer": { "click-to-reveal": true, "transition-duration": 250, "children-class": "tray-child" },
+    "modules": ["custom/tray-toggle", "tray"]
+  },
+  "custom/tray-toggle": { "format": "󰀻 ", "tooltip": false },
+  "tray": { "icon-size": 18, "spacing": 4 },
+
+  "custom/sps#1": { "format": " · ", "tooltip": false },
+  "custom/sps#2": { "format": " · ", "tooltip": false },
+  "custom/sps#3": { "format": " · ", "tooltip": false },
+  "custom/sps#4": { "format": " · ", "tooltip": false },
+  "custom/sps#5": { "format": " · ", "tooltip": false },
+  "custom/sps#6": { "format": " · ", "tooltip": false }
+}
