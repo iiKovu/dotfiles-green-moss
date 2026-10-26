@@ -1,5 +1,5 @@
 return {
 	primary = "#a3b18a",
-	soft = "#c5cfae",
-	background = "#181A15",
+	soft = "#D2C6B8",
+	background = "#1A1C16",
 }

@@ -1,17 +1,17 @@
 * {
-    background-window:           #10120e;
-    background-card:             #2b2f25;
-    selected:                    #666b57;
-    foreground-normal:           #f3ece4;
-    foreground-muted:            #b8bdac;
+    background-window:           #141611;
+    background-card:             #262920;
+    selected:                    #6b705c;
+    foreground-normal:           #e5dcd0;
+    foreground-muted:            #b0a294;
     foreground-selected:         #f3ece4;
 }
 window {
-    background-image:            linear-gradient(to bottom, #10120ee8, #181a15e8);
+    background-image:            linear-gradient(to bottom, #141611e8, #1a1c16e8);
 }
 element {
-    background-image:            linear-gradient(to bottom, #3a3f33e6, #2b2f25e6);
+    background-image:            linear-gradient(to bottom, #2e3127e6, #23261de6);
 }
 element selected.normal {
-    background-image:            linear-gradient(to bottom, #737a63, #666b57);
+    background-image:            linear-gradient(to bottom, #787d68, #6b705c);
 }
