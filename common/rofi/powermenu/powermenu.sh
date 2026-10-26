@@ -25,7 +25,7 @@ run_rofi() {
 }
 
 # Theme picker: same look, preset names instead of icons
-themectl="$HOME/Documents/scripts/theme.sh"
+themectl="$HOME/Documents/scripts/common/theme.sh"
 pick_theme() {
 	local presets active row
 	mapfile -t presets < <("$themectl" | cut -c3-)

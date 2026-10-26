@@ -55,7 +55,7 @@ super + n
 
 # Restart Picom
 super + shift + x
-    "$HOME/Documents/scripts/restartpicom.sh"
+    "$HOME/Documents/scripts/x11/restartpicom.sh"
 
 # Restart Polybar
 super + shift + z
@@ -67,11 +67,11 @@ shift + Print
 
 # Copy selected area to clipboard
 super + shift + s
-    sleep 0.2; scrot -s "/tmp/%Y-%m-%d_%H-%M-%S_selection_\$wx\$h.png" -e '"$$HOME/Documents/scripts/png-clipboard" < "$f" && rm -- "$f"' && notify-send 'Screenshot Taken' 'Area Selection'
+    sleep 0.2; scrot -s "/tmp/%Y-%m-%d_%H-%M-%S_selection_\$wx\$h.png" -e '"$$HOME/Documents/scripts/x11/png-clipboard" < "$f" && rm -- "$f"' && notify-send 'Screenshot Taken' 'Area Selection'
 
 # Copy selected area after one second
 super + shift + a
-    sleep 0.2; scrot -s -d 1 "/tmp/%Y-%m-%d_%H-%M-%S_selection_timer_\$wx\$h.png" -e '"$$HOME/Documents/scripts/png-clipboard" < "$f" && rm -- "$f"' && notify-send 'Screenshot Taken' 'Area Selection with Timer'
+    sleep 0.2; scrot -s -d 1 "/tmp/%Y-%m-%d_%H-%M-%S_selection_timer_\$wx\$h.png" -e '"$$HOME/Documents/scripts/x11/png-clipboard" < "$f" && rm -- "$f"' && notify-send 'Screenshot Taken' 'Area Selection with Timer'
 
 # Maim (Shadow Window Screenshot)
 super + shift + v
@@ -106,7 +106,7 @@ super + period
 
 # Fast clicks
 ctrl + alt + i
-    "$HOME/Documents/scripts/fastclick.sh"
+    "$HOME/Documents/scripts/x11/fastclick.sh"
 
 #################
 # bspwm Hotkeys #
@@ -130,12 +130,12 @@ super + m
 
 # Send the Focused Node to the Newest Preselected Node
 super + y
-    bspc node -n newest.!automatic.local && "$HOME/Documents/scripts/move_pointer_on_key.sh"
+    bspc node -n newest.!automatic.local && "$HOME/Documents/scripts/x11/move_pointer_on_key.sh"
     # bspc node newest.marked.local -n newest.!automatic.local
 
 # Swap the Current Node and the Biggest Window
 super + g
-    bspc node -s biggest.local && "$HOME/Documents/scripts/move_pointer_on_key.sh"
+    bspc node -s biggest.local && "$HOME/Documents/scripts/x11/move_pointer_on_key.sh"
 
 ###############
 # State/Flags #
@@ -151,7 +151,7 @@ super + alt + {g,v,b,n,m}
 
 # Unhide All Nodes
 super + alt + u
-    "$HOME/Documents/scripts/unhidewindows.sh"
+    "$HOME/Documents/scripts/x11/unhidewindows.sh"
 
 ##############
 # Focus/Swap #
@@ -159,7 +159,7 @@ super + alt + u
 
 # Focus the Node in the Given Direction
 super + {_,shift + }{h,j,k,l}
-    bspc node -{f,s} {west,south,north,east} && "$HOME/Documents/scripts/move_pointer_on_key.sh"
+    bspc node -{f,s} {west,south,north,east} && "$HOME/Documents/scripts/x11/move_pointer_on_key.sh"
 
 # Focus the Nalt for the Given Path Jump
 # super + {p,b,comma,period}
@@ -167,7 +167,7 @@ super + {_,shift + }{h,j,k,l}
 
 # Focus the Next/Previous Window in the Current Desktop
 super + {_,shift + }c
-    bspc node -f {next,prev}.local.!hidden.window && "$HOME/Documents/scripts/move_pointer_on_key.sh"
+    bspc node -f {next,prev}.local.!hidden.window && "$HOME/Documents/scripts/x11/move_pointer_on_key.sh"
 
 # Focus the Next/Previous Desktop in the Current Monitor
 ctrl + alt + {h,l}
@@ -175,7 +175,7 @@ ctrl + alt + {h,l}
 
 # Focus the Last Node
 alt + Tab
-    bspc node -f last && "$HOME/Documents/scripts/move_pointer_on_key.sh"
+    bspc node -f last && "$HOME/Documents/scripts/x11/move_pointer_on_key.sh"
 
 # Focus the Last Desktop
 super + Tab

@@ -15,26 +15,32 @@
 
 ## Included
 
-- `bspwm` / `sxhkd` - Window manager and keybindings
-- `polybar` - Status bar
-- `picom` - Compositor (v13 animations; extra `picom.conf.*` variants)
-- `rofi` - Launcher and power menu (with a theme picker)
-- `kitty` - Terminal
-- `dunst` - Notifications
-- `fish` - Shell, tide prompt and functions
-- `nvim` - Neovim (lazy.nvim, noirbuddy)
-- `yazi` - File manager
-- `themes/green_moss` - This preset's colors and wallpapers; `themes/current` points at it
-- `scripts` - `theme.sh` (switch presets), `wallpaper.sh`, `restartpicom.sh`, `build-gtk-theme.sh` (recolored Orchis GTK theme)
+Files are grouped by session: `common/` works in any session, `x11/` is the
+bspwm session, `wayland/` the Hyprland one (in progress).
+
+- `common/`
+  - `rofi` - Launcher and power menu (with a theme picker)
+  - `kitty` - Terminal
+  - `dunst` - Notifications
+  - `fish` - Shell, tide prompt and functions
+  - `nvim` - Neovim (lazy.nvim, noirbuddy)
+  - `yazi` - File manager
+  - `themes/green_moss` - This preset's colors and wallpapers; `themes/current` points at it
+  - `scripts` - `theme.sh` (switch presets), `build-gtk-theme.sh` (recolored Orchis GTK theme)
+- `x11/`
+  - `bspwm` / `sxhkd` - Window manager and keybindings
+  - `polybar` - Status bar
+  - `picom` - Compositor (v13 animations; extra `picom.conf.*` variants)
+  - `scripts` - `wallpaper.sh`, `restartpicom.sh`
 
 ## Installation
 
-Clone the repository and copy/link the folders into `~/.config/`, and
-`scripts/` into `~/Documents/scripts/`.
+Clone the repository and copy/link the folders inside each group into
+`~/.config/`, and each group's `scripts/` into `~/Documents/scripts/<group>/`.
 
 ```sh
 git clone https://github.com/iiKovu/dotfiles-green-moss.git
 cd dotfiles-green-moss
 ```
 
-Wallpaper paths are set in `themes/green_moss/preset.sh`.
+Wallpaper paths are set in `common/themes/green_moss/preset.sh`.

@@ -27,7 +27,7 @@ gtk="${XDG_DATA_HOME:-$HOME/.local/share}/themes"
 if pgrep -x bspwm >/dev/null; then
     bspc config focused_border_color "$BORDER_FOCUSED"
     bspc config normal_border_color "$BORDER_NORMAL"
-    "$HOME/Documents/scripts/wallpaper.sh"
+    "$HOME/Documents/scripts/x11/wallpaper.sh"
     "$themes/../polybar/launch.sh" >/dev/null 2>&1 &
 fi
 pkill -USR1 -x kitty

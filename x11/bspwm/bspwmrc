@@ -44,7 +44,7 @@ bspc wm -O $monitor_order
 #                               Compositor                                    #
 ###############################################################################
 
-~/Documents/scripts/restartpicom.sh
+~/Documents/scripts/x11/restartpicom.sh
 
 ###############################################################################
 #                                Keybinds                                     #
@@ -63,7 +63,7 @@ xset r rate 400 100 &
 #                                 Wallpaper                                   #
 ###############################################################################
 
-~/Documents/scripts/wallpaper.sh
+~/Documents/scripts/x11/wallpaper.sh
 
 ###############################################################################
 #                                  Bar                                        #
