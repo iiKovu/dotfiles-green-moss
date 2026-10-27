@@ -77,6 +77,7 @@ hl.config({
 
     dwindle = {
         preserve_split = true, -- needed for togglesplit / preselect
+        force_split    = 2,    -- new windows go right/down, not toward the cursor (bspwm's default)
     },
 
     misc = {
