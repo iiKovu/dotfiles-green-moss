@@ -153,6 +153,14 @@ hl.window_rule({
     center = true,
 })
 
+-- Preselection target (binds.lua tags it), like bspwm's presel feedback
+hl.window_rule({
+    name  = "presel",
+    match = { tag = "presel" },
+    border_color = "rgb(F2C94C)",
+    border_size  = 3,
+})
+
 hl.window_rule({
     name  = "fix-xwayland-drags",
     match = { class = "^$", title = "^$", xwayland = true, float = true, fullscreen = false, pin = false },

@@ -126,8 +126,48 @@ local dirs = { h = "l", j = "d", k = "u", l = "r" }
 for key, dir in pairs(dirs) do
     bind("SUPER + " .. key,         hl.dsp.focus({ direction = dir }), { repeating = true })
     bind("SUPER + SHIFT + " .. key, hl.dsp.window.swap({ direction = dir }), { repeating = true })
-    bind("SUPER + ALT + " .. key,   hl.dsp.layout("preselect " .. dir))
 end
+
+-- Preselection. Dwindle draws no area, so the target window gets the "presel" tag
+-- (hyprland.lua colors its border) until a window lands there or it's canceled.
+local presel -- target window address
+local function clear_presel()
+    if presel then hl.dispatch(hl.dsp.window.tag({ tag = "-presel", window = "address:" .. presel })) end
+    presel = nil
+end
+for key, dir in pairs(dirs) do
+    bind("SUPER + ALT + " .. key, function()
+        local w = hl.get_active_window()
+        if not w or w.floating then return end
+        clear_presel()
+        hl.dispatch(hl.dsp.layout("preselect " .. dir))
+        hl.dispatch(hl.dsp.window.tag({ tag = "+presel" }))
+        presel = w.address
+    end)
+end
+-- Cancel (any non-direction resets dwindle's override)
+bind("SUPER + ALT + space", function()
+    hl.dispatch(hl.dsp.layout("preselect x"))
+    clear_presel()
+end)
+hl.on("window.open", clear_presel)
+
+-- Move the focused window into the preselection (bspc node -n newest.!automatic.local):
+-- park it, focus the target so dwindle splits there, bring it back
+bind("SUPER + y", function()
+    local w = hl.get_active_window()
+    if not presel or not w or w.address == presel then return end
+    local target
+    for _, c in ipairs(hl.get_windows()) do
+        if c.address == presel then target = c break end
+    end
+    if not target or not target.workspace then return clear_presel() end
+    hl.dispatch(hl.dsp.window.move({ workspace = "special:presel", follow = false }))
+    hl.dispatch(hl.dsp.focus({ window = target }))
+    hl.dispatch(hl.dsp.window.move({ window = w, workspace = target.workspace, follow = false }))
+    hl.dispatch(hl.dsp.focus({ window = w }))
+    clear_presel()
+end)
 
 -- Next/previous window (monocle needs its own layout message)
 local function cycle(prev)
