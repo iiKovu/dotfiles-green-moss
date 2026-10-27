@@ -3,7 +3,7 @@
 
 * {
   font-family: "Iosevka", "Liga SFMono Nerd Font", "Font Awesome 7 Free";
-  font-size: 12px;
+  font-size: 16px;
   font-weight: bold;
   min-height: 0;
   border: none;
@@ -21,6 +21,11 @@ window#waybar.third {
   background: #000000;
 }
 
+/* GTK sits the text ~7px high in the bar; nudge it to the middle */
+window#waybar label {
+  padding-top: 7px;
+}
+
 .modules-left,
 .modules-right {
   padding: 0 18px;
@@ -33,7 +38,7 @@ window#waybar.second .modules-right {
 /* Workspaces: kanji in Noto CJK, underline like polybar's line-size = 2 */
 #workspaces button {
   font-family: "Noto Sans CJK JP";
-  font-size: 13px;
+  font-size: 17px;
   padding: 0 8px;
   color: @foreground_dim;
   background: transparent;
@@ -46,6 +51,14 @@ window#waybar.second .modules-right {
 #workspaces button.urgent {
   color: @red;
   box-shadow: inset 0 -2px @red;
+}
+/* Kanji and the tray glyph sit lower than the text in their fonts */
+#workspaces button label {
+  padding-top: 1px;
+}
+#custom-tray-toggle {
+  padding-top: 0;
+  padding-bottom: 3px;
 }
 #workspaces button:hover {
   background: transparent;

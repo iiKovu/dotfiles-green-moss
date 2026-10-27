@@ -91,11 +91,26 @@ hl.config({
     },
 })
 
--- Centre zoom with a slight overshoot, like the picom showcase animations
+-- Ported from picom.conf's animations (same curves and durations).
+-- Speeds are in 100ms units; anything not listed inherits "global".
+hl.curve("overshoot", { type = "bezier", points = { {0.34, 1.36}, {0.64, 1} } })
+hl.curve("easeOut",   { type = "bezier", points = { {0.22, 1},    {0.36, 1} } })
+hl.curve("easeIn",    { type = "bezier", points = { {0.55, 0},    {1, 0.45} } })
+hl.animation({ leaf = "global",        enabled = true, speed = 3,   bezier = "easeOut" })
+-- Open: zoom out of the centre from 50% with overshoot; close: back into the centre
+hl.animation({ leaf = "windowsIn",     enabled = true, speed = 3.2, bezier = "overshoot", style = "popin 50%" })
+hl.animation({ leaf = "windowsOut",    enabled = true, speed = 1.8, bezier = "easeIn",    style = "popin 60%" })
+hl.animation({ leaf = "windowsMove",   enabled = true, speed = 2.8, bezier = "easeOut" })
+hl.animation({ leaf = "fadeIn",        enabled = true, speed = 1.8, bezier = "easeOut" })
+hl.animation({ leaf = "fadeOut",       enabled = true, speed = 1.8, bezier = "easeIn" })
+-- Workspace switch: spring fade
 hl.curve("pop", { type = "spring", mass = 1, stiffness = 238.1191, dampening = 20 })
-hl.animation({ leaf = "windowsIn",  enabled = true, speed = 4,   spring = "pop", style = "popin 80%" })
-hl.animation({ leaf = "windowsOut", enabled = true, speed = 3,   spring = "pop", style = "popin 80%" })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 2.5, spring = "pop", style = "fade" })
+hl.animation({ leaf = "workspaces",    enabled = true, speed = 2,   spring = "pop",     style = "fade" })
+-- Layers (rofi, notifications): quick appear from 96%
+hl.animation({ leaf = "layersIn",      enabled = true, speed = 2,   bezier = "easeOut", style = "popin 96%" })
+hl.animation({ leaf = "layersOut",     enabled = true, speed = 1.2, bezier = "easeIn",  style = "popin 97%" })
+hl.animation({ leaf = "fadeLayersIn",  enabled = true, speed = 2,   bezier = "easeOut" })
+hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.2, bezier = "easeIn" })
 
 ---------------
 ---- INPUT ----
@@ -145,3 +160,14 @@ hl.window_rule({
 })
 
 require("binds")
+
+-- While rofi is open, switch to an empty submap so its own Super+hjkl binds reach it
+hl.define_submap("rofi", function()
+    hl.bind("F24", hl.dsp.no_op()) -- an empty submap isn't registered
+end)
+hl.on("layer.opened", function(layer)
+    if layer and layer.namespace == "rofi" then hl.dispatch(hl.dsp.submap("rofi")) end
+end)
+hl.on("layer.closed", function(layer)
+    if layer and layer.namespace == "rofi" then hl.dispatch(hl.dsp.submap("reset")) end
+end)

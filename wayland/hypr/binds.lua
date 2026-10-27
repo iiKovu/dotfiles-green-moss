@@ -141,8 +141,18 @@ end
 bind("SUPER + c",         function() cycle(false) end)
 bind("SUPER + SHIFT + c", function() cycle(true) end)
 
-bind("CTRL + ALT + h", hl.dsp.focus({ workspace = "m-1" }))
-bind("CTRL + ALT + l", hl.dsp.focus({ workspace = "m+1" }))
+-- Prev/next workspace of this monitor, empty ones included, wrapping (bspc desktop -f prev.local)
+local ranges = { ["DP-2"] = { 1, 5 }, ["DP-1"] = { 6, 7 }, ["HDMI-A-1"] = { 8, 9 } }
+local function step(delta)
+    local ws = hl.get_active_workspace()
+    local r = ws and ws.monitor and ranges[ws.monitor.name]
+    if not r then return hl.dispatch(hl.dsp.focus({ workspace = delta > 0 and "m+1" or "m-1" })) end
+    local id = ws.id + delta
+    if id > r[2] then id = r[1] elseif id < r[1] then id = r[2] end
+    hl.dispatch(hl.dsp.focus({ workspace = id }))
+end
+bind("CTRL + ALT + h", function() step(-1) end)
+bind("CTRL + ALT + l", function() step(1) end)
 bind("ALT + Tab",      hl.dsp.focus({ last = true }))
 bind("SUPER + Tab",    hl.dsp.focus({ workspace = "previous" }))
 
@@ -163,6 +173,21 @@ for key, d in pairs(grow) do
     bind("SUPER + CTRL + ALT + " .. key, hl.dsp.window.resize({ x = -dx, y = -dy, relative = true }), { repeating = true })
     bind("ALT + SHIFT + " .. key,        hl.dsp.window.move({ x = d[1] * 4, y = d[2] * 4, relative = true }))
 end
+
+-- Equalize: every tiled window's split back to 50/50 (splits with no direct window child stay)
+bind("SUPER + b", function()
+    local active = hl.get_active_window()
+    if not active or not active.workspace then return end
+    local cursor = hl.get_cursor_pos()
+    for _, w in ipairs(hl.get_workspace_windows(active.workspace)) do
+        if not w.floating then
+            hl.dispatch(hl.dsp.focus({ window = w }))
+            hl.dispatch(hl.dsp.layout("splitratio 1 exact"))
+        end
+    end
+    hl.dispatch(hl.dsp.focus({ window = active }))
+    if cursor then hl.dispatch(hl.dsp.cursor.move({ x = cursor.x, y = cursor.y })) end
+end)
 
 -- Mouse: Alt + LMB move, Alt + RMB resize
 bind("ALT + mouse:272", hl.dsp.window.drag(),   { mouse = true })
