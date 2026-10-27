@@ -124,8 +124,8 @@ end)
 
 local dirs = { h = "l", j = "d", k = "u", l = "r" }
 for key, dir in pairs(dirs) do
-    bind("SUPER + " .. key,         hl.dsp.focus({ direction = dir }))
-    bind("SUPER + SHIFT + " .. key, hl.dsp.window.swap({ direction = dir }))
+    bind("SUPER + " .. key,         hl.dsp.focus({ direction = dir }), { repeating = true })
+    bind("SUPER + SHIFT + " .. key, hl.dsp.window.swap({ direction = dir }), { repeating = true })
     bind("SUPER + ALT + " .. key,   hl.dsp.layout("preselect " .. dir))
 end
 
@@ -138,8 +138,8 @@ local function cycle(prev)
         hl.dispatch(hl.dsp.window.cycle_next({ next = not prev }))
     end
 end
-bind("SUPER + c",         function() cycle(false) end)
-bind("SUPER + SHIFT + c", function() cycle(true) end)
+bind("SUPER + c",         function() cycle(false) end, { repeating = true })
+bind("SUPER + SHIFT + c", function() cycle(true) end, { repeating = true })
 
 -- Prev/next workspace of this monitor, empty ones included, wrapping (bspc desktop -f prev.local)
 local ranges = { ["DP-2"] = { 1, 5 }, ["DP-1"] = { 6, 7 }, ["HDMI-A-1"] = { 8, 9 } }
@@ -151,8 +151,8 @@ local function step(delta)
     if id > r[2] then id = r[1] elseif id < r[1] then id = r[2] end
     hl.dispatch(hl.dsp.focus({ workspace = id }))
 end
-bind("CTRL + ALT + h", function() step(-1) end)
-bind("CTRL + ALT + l", function() step(1) end)
+bind("CTRL + ALT + h", function() step(-1) end, { repeating = true })
+bind("CTRL + ALT + l", function() step(1) end, { repeating = true })
 bind("ALT + Tab",      hl.dsp.focus({ last = true }))
 bind("SUPER + Tab",    hl.dsp.focus({ workspace = "previous" }))
 
@@ -171,7 +171,7 @@ for key, d in pairs(grow) do
     local dx, dy = math.abs(d[1]), math.abs(d[2])
     bind("SUPER + CTRL + " .. key,       hl.dsp.window.resize({ x = dx,  y = dy,  relative = true }), { repeating = true })
     bind("SUPER + CTRL + ALT + " .. key, hl.dsp.window.resize({ x = -dx, y = -dy, relative = true }), { repeating = true })
-    bind("ALT + SHIFT + " .. key,        hl.dsp.window.move({ x = d[1] * 4, y = d[2] * 4, relative = true }))
+    bind("ALT + SHIFT + " .. key,        hl.dsp.window.move({ x = d[1] * 4, y = d[2] * 4, relative = true }), { repeating = true })
 end
 
 -- Equalize: every tiled window's split back to 50/50 (splits with no direct window child stay)
