@@ -24,6 +24,26 @@ gtk="${XDG_DATA_HOME:-$HOME/.local/share}/themes"
 [[ -d $target ]] && ln -sfn "$target" "$gtk/Orchis-Preset" ||
     notify-send -u critical "Theme" "No GTK theme $GTK_NAME (build-gtk-theme.sh $1)"
 
+# GTK reads settings.ini on X11 but gsettings on Wayland: mirror settings.ini so both match
+# (gtk-4.0/settings.ini is a symlink to it)
+ini="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-3.0/settings.ini"
+gtk_get() { sed -n "s/^$1=//p" "$ini"; }
+gtk_set() { [[ -n $2 ]] && gsettings set org.gnome.desktop.interface "$1" "$2"; }
+if [[ -f $ini ]]; then
+    gtk_set gtk-theme "$(gtk_get gtk-theme-name)"
+    gtk_set icon-theme "$(gtk_get gtk-icon-theme-name)"
+    gtk_set font-name "$(gtk_get gtk-font-name)"
+    gtk_set cursor-theme "$(gtk_get gtk-cursor-theme-name)"
+    gtk_set cursor-size "$(gtk_get gtk-cursor-theme-size)"
+    gtk_set font-hinting "$(gtk_get gtk-xft-hintstyle | sed 's/^hint//')"
+    rgba=$(gtk_get gtk-xft-rgba)
+    case "$(gtk_get gtk-xft-antialias),$rgba" in
+    0,*) gtk_set font-antialiasing none ;;
+    *,none | *,) gtk_set font-antialiasing grayscale ;;
+    *) gtk_set font-antialiasing rgba && gtk_set font-rgba-order "$rgba" ;;
+    esac
+fi
+
 if pgrep -x bspwm >/dev/null; then
     bspc config focused_border_color "$BORDER_FOCUSED"
     bspc config normal_border_color "$BORDER_NORMAL"

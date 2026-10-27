@@ -20,25 +20,18 @@ for i = 1, 9 do
     hl.workspace_rule({ workspace = tostring(i), monitor = output, default = (i == 1 or i == 6 or i == 8) })
 end
 
------------------------------
----- SESSION ENVIRONMENT ----
------------------------------
-
--- Same dynamic var xinitrc sets for the X session
-local gpg = io.popen("gpgconf --list-dirs agent-ssh-socket 2>/dev/null")
-if gpg then
-    local sock = gpg:read("*l")
-    gpg:close()
-    if sock and sock ~= "" then hl.env("SSH_AUTH_SOCK", sock) end
-end
-
 -------------------
 ---- AUTOSTART ----
 -------------------
 
+-- Hyprland imports (and unsets on exit) WAYLAND_DISPLAY, DISPLAY, HYPRLAND_INSTANCE_SIGNATURE
+-- and XDG_CURRENT_DESKTOP itself; systemd reads /etc/environment via environment.d.
+-- SSH_AUTH_SOCK comes from config.fish (Ly runs `fish --login` before the session).
+local session_vars = "SSH_AUTH_SOCK XDG_SESSION_TYPE XDG_SESSION_DESKTOP"
+
 hl.on("hyprland.start", function()
-    -- Hand the whole session env to systemd --user and D-Bus, like xinitrc does
-    hl.exec_cmd("dbus-update-activation-environment --systemd --all")
+    hl.exec_cmd("dbus-update-activation-environment --systemd " .. session_vars
+        .. "; systemctl --user start hyprland-session.target")
 
     hl.exec_cmd("hyprpaper")
     hl.exec_cmd(scripts .. "/wayland/wallpaper.sh")
@@ -49,6 +42,12 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("pgrep -x steam >/dev/null || steam -silent")
     hl.exec_cmd("pgrep -x easyeffects >/dev/null || easyeffects --service-mode --hide-window")
     hl.exec_cmd("pgrep -x udiskie >/dev/null || udiskie --smart-tray")
+end)
+
+-- Blocking, so it finishes before Hyprland exits; the user manager outlives the session
+hl.on("hyprland.shutdown", function()
+    os.execute("systemctl --user stop hyprland-session.target; "
+        .. "systemctl --user unset-environment XDG_SESSION_TYPE XDG_SESSION_DESKTOP")
 end)
 
 -----------------------
