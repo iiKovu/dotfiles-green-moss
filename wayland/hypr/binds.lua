@@ -14,6 +14,20 @@ local function hidden_windows()
     return out
 end
 
+-- Quickshell notch call (presets with a quickshell.json); without the notch, run fallback
+local function notch(call, fallback)
+    return function()
+        local p = io.popen("pgrep -x quickshell") -- os.execute has no exit status in Hyprland
+        local running = p:read("*a") ~= ""
+        p:close()
+        if running then
+            hl.exec_cmd("qs ipc call notch " .. call)
+        elseif fallback then
+            hl.dispatch(fallback)
+        end
+    end
+end
+
 ------------------------------
 ---- WM-independent keys  ----
 ------------------------------
@@ -44,11 +58,13 @@ bind("SUPER + space",         exec("rofi -show drun"))
 bind("SUPER + SHIFT + space", exec("rofi -show run"))
 bind("SUPER + z",             exec("rofi-pass"))
 bind("SUPER + x",             exec(home .. "/.config/rofi/powermenu/powermenu.sh"))
+bind("SUPER + d",             notch("control"))  -- Control Centre
+bind("SUPER + r",             notch("launcher")) -- actions (>), windows (@), sums, timers
 bind("SUPER + e",             exec("kitty -e yazi"))
 bind("SUPER + o",             exec("obsidian"))
 bind("SUPER + n",             exec("notify-send 'Hey, this is a test' 'This is a test as well'"))
 bind("SUPER + period",        exec("rofimoji"))
-bind("SUPER + SHIFT + z",     exec("pkill -x waybar; waybar"))
+bind("SUPER + SHIFT + z",     exec("pkill -x waybar; pkill -x quickshell; " .. scripts .. "/wayland/bar.sh"))
 bind("SUPER + v",             exec("cliphist list | rofi -dmenu -p clipboard | cliphist decode | wl-copy"))
 -- X11-only, kept in sxhkd: SUPER + p Misa assistant (bspc), CTRL + ALT + i fastclick (xdotool)
 
@@ -194,7 +210,7 @@ end
 bind("CTRL + ALT + h", function() step(-1) end, { repeating = true })
 bind("CTRL + ALT + l", function() step(1) end, { repeating = true })
 bind("ALT + Tab",      hl.dsp.focus({ last = true }))
-bind("SUPER + Tab",    hl.dsp.focus({ workspace = "previous" }))
+bind("SUPER + Tab",    notch("overview", hl.dsp.focus({ workspace = "previous" })))
 
 for i = 1, 9 do
     bind("SUPER + " .. i,         hl.dsp.focus({ workspace = i }))

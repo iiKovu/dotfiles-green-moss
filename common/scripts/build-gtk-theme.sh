@@ -26,9 +26,10 @@ sed -i -E \
     -e "s/^\\\$grey-650: .*/\$grey-650: ${GTK_SURFACE};/" \
     "$tmp/src/_sass/_color-palette-default.scss"
 
-(cd "$tmp" && ./install.sh -d "$tmp/out" -n Orchis -t "$GTK_VARIANT" -c dark -s compact >/dev/null)
+# Orchis' install.sh calls its blue variant "default"
+(cd "$tmp" && ./install.sh -d "$tmp/out" -n Orchis -t "${GTK_VARIANT/#blue/default}" -c dark -s compact >/dev/null)
 
 rm -rf "${dest:?}/$GTK_NAME"
 mkdir -p "$dest"
-mv "$tmp"/out/Orchis-*-Dark-Compact "$dest/$GTK_NAME"
+mv "$tmp"/out/Orchis*-Dark-Compact "$dest/$GTK_NAME"
 echo "built $dest/$GTK_NAME"
