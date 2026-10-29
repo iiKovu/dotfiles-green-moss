@@ -78,9 +78,9 @@ bind("SUPER + SHIFT + v", exec(scripts .. "/wayland/screenshot-shadow.sh"))
 bind("XF86AudioRaiseVolume", exec("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
 bind("XF86AudioLowerVolume", exec("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"), { locked = true, repeating = true })
 bind("XF86AudioMute",        exec("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
-bind("XF86AudioPrev",        exec("playerctl previous"),   { locked = true })
-bind("XF86AudioPlay",        exec("playerctl play-pause"), { locked = true })
-bind("XF86AudioNext",        exec("playerctl next"),       { locked = true })
+bind("XF86AudioPrev",        exec("playerctl -p spotify,%any previous"),   { locked = true })
+bind("XF86AudioPlay",        exec("playerctl -p spotify,%any play-pause"), { locked = true })
+bind("XF86AudioNext",        exec("playerctl -p spotify,%any next"),       { locked = true })
 
 ---------------------
 ---- Window mgmt ----

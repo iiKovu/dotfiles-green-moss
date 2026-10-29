@@ -92,13 +92,13 @@ XF86AudioMute
     wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 
 XF86AudioPrev
-    playerctl previous
+    playerctl -p spotify,%any previous
 
 XF86AudioPlay
-    playerctl play-pause
+    playerctl -p spotify,%any play-pause
 
 XF86AudioNext
-    playerctl next
+    playerctl -p spotify,%any next
 
 # Emojis
 super + period
