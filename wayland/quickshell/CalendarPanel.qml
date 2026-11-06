@@ -12,7 +12,11 @@ import QtQuick.Layouts
 Item {
     id: root
 
-    readonly property bool active: ShellState.panel === "calendar"
+    // Also embedded in the Control Centre, which sets its own `active` and pad 0
+    property bool active: ShellState.panel === "calendar"
+    property int pad: 20
+    // Columns share the whole width, so the grid stays centered at any size
+    readonly property real cellW: (root.width - 2 * (root.pad > 0 ? root.pad + 1 : 0)) / 7
 
     // ONLY the date, not the time. The shell's clock ticks every second, and
     // hanging the grid off it rebuilt 42 Date objects and their 42 delegates
@@ -118,10 +122,10 @@ Item {
     ColumnLayout {
         anchors {
             fill: parent
-            leftMargin: 21
-            rightMargin: 21
-            topMargin: 20
-            bottomMargin: 16
+            leftMargin: root.pad > 0 ? root.pad + 1 : 0
+            rightMargin: root.pad > 0 ? root.pad + 1 : 0
+            topMargin: root.pad
+            bottomMargin: root.pad > 0 ? root.pad - 4 : 0
         }
         spacing: 0
 
@@ -266,7 +270,7 @@ Item {
             Repeater {
                 model: 7
                 Item {
-                    width: 44
+                    width: root.cellW
                     height: 18
                     Text {
                         anchors.centerIn: parent
@@ -296,7 +300,7 @@ Item {
                 Item {
                     id: cell
                     required property var modelData
-                    width: 44
+                    width: root.cellW
                     height: 32
 
                     // Accent circle for today

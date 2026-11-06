@@ -153,7 +153,7 @@ Singleton {
     }
     readonly property int notchWWanted: mode === "launcher" ? 660
         : mode === "overview" ? ovW
-        : mode === "control" ? 1080
+        : mode === "control" ? (root.notifCount > 0 ? 1080 : 760)
         : mode === "system" ? 920
         : mode === "power" ? 430
         : mode === "calendar" ? 350

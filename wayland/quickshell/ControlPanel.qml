@@ -20,7 +20,7 @@ Item {
         anchors { fill: parent; leftMargin: 24; rightMargin: 22; topMargin: 20; bottomMargin: 20 }
         spacing: 20
 
-        // ═════════════ izquierda: reproductor vertical ═════════════
+        // ═════════════ left: vertical player ═════════════
         // It is the player from the reference, but INSIDE Super+D: it shares the
         // same surface and the same close-on-click-outside as the rest of the
         // Control Centre.
@@ -31,7 +31,7 @@ Item {
 
         Rectangle { Layout.fillHeight: true; width: 1; color: Colors.hairline }
 
-        // ═════════════════ centro: controles ═════════════════
+        // ═════════════════ center: controls ═════════════════
         ColumnLayout {
             // maximumWidth AS WELL AS preferredWidth: in Qt Layouts the preferred size
             // is NOT a cap, and it only takes one row asking for more for the whole
@@ -91,7 +91,7 @@ Item {
             GridLayout {
                 Layout.fillWidth: true
                 Layout.topMargin: 2
-                columns: 2
+                columns: 3
                 columnSpacing: 10
 
                 // One single target per card. If it has a dedicated panel, any click
@@ -197,23 +197,21 @@ Item {
                     on: false
                     panel: "overview"
                 }
-                // `on` is always false on purpose: the other tiles switch something on
-                // and the colour says whether it is on, but this one is a door, not a
-                // switch. Painting it on would promise a state that does not exist.
-                Toggle {
-                    icon: Icons.calendar; label: "Calendar"; idx: 2
-                    on: false
-                    panel: "calendar"
-                }
                 // Notch stuck to the top edge, or the floating island
                 Toggle {
-                    icon: "󰍜"; label: "Island"; idx: 3
+                    icon: "󰍜"; label: "Island"; idx: 2
                     on: Config.island
                     onActivated: Config.notchStyle = Config.island ? "notch" : "island"
                 }
             }
 
-            Item { Layout.fillHeight: true }
+            // ---- the month, filling the room between switches and stats ----
+            CalendarPanel {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                active: ShellState.panel === "control"
+                pad: 0
+            }
 
             // ---- the door to the system panel ----
             RowLayout {
@@ -277,10 +275,12 @@ Item {
             }
         }
 
-        Rectangle { Layout.fillHeight: true; width: 1; color: Colors.hairline }
+        // With no notifications the column goes and the panel narrows (ShellState.notchWWanted)
+        Rectangle { visible: ShellState.notifCount > 0; Layout.fillHeight: true; width: 1; color: Colors.hairline }
 
-        // ══════════════════ derecha: notificaciones ══════════════════
+        // ══════════════════ right: notifications ══════════════════
         ColumnLayout {
+            visible: ShellState.notifCount > 0
             Layout.fillWidth: true
             Layout.fillHeight: true
             spacing: 8
