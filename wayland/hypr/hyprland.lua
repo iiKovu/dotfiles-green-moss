@@ -35,7 +35,7 @@ hl.on("hyprland.start", function()
 
     hl.exec_cmd("hyprpaper")
     hl.exec_cmd(scripts .. "/wayland/wallpaper.sh")
-    hl.exec_cmd(scripts .. "/wayland/bar.sh") -- notch or waybar + dunst, per preset
+    hl.exec_cmd(scripts .. "/wayland/bar.sh") -- the Quickshell notch (bar + notifications)
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
     hl.exec_cmd("pgrep -x steam >/dev/null || steam -silent")

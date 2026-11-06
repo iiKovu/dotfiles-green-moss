@@ -52,8 +52,8 @@ if pgrep -x bspwm >/dev/null; then
 elif pgrep -x Hyprland >/dev/null; then
     hyprctl reload >/dev/null # hypr/preset.lua re-reads the preset
     "$HOME/Documents/scripts/wayland/wallpaper.sh" >/dev/null
-    "$HOME/Documents/scripts/wayland/bar.sh"  # notch or waybar, per preset
-    pkill -USR2 -x waybar # reload style (re-imports the preset colors)
+    "$HOME/Documents/scripts/wayland/bar.sh"
+    qs ipc call notch colors >/dev/null 2>&1 # re-read the preset's colors
 fi
 pkill -USR1 -x kitty
 pgrep -x dunst >/dev/null && dunstctl reload

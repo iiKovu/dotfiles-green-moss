@@ -16,12 +16,12 @@
 ## Included
 
 Files are grouped by session: `common/` works in any session, `x11/` is the
-bspwm session, `wayland/` the Hyprland one (in progress).
+bspwm session, `wayland/` the Hyprland one.
 
 - `common/`
   - `rofi` - Launcher and power menu (with a theme picker)
   - `kitty` - Terminal
-  - `dunst` - Notifications
+  - `dunst` - Notifications on bspwm (the notch handles them on Hyprland)
   - `fish` - Shell, tide prompt and functions
   - `nvim` - Neovim (lazy.nvim, noirbuddy)
   - `yazi` - File manager
@@ -30,8 +30,23 @@ bspwm session, `wayland/` the Hyprland one (in progress).
 - `x11/`
   - `bspwm` / `sxhkd` - Window manager and keybindings
   - `polybar` - Status bar
-  - `picom` - Compositor (v13 animations; extra `picom.conf.*` variants)
+  - `picom` - Compositor (v13 animations)
   - `scripts` - `wallpaper.sh`, `restartpicom.sh`
+- `wayland/`
+  - `hypr` - Hyprland (Lua config) and keybindings
+  - `quickshell` - The notch: clock, now playing, volume, notifications,
+    Control Centre, calendar, system stats, workspace map and launcher actions
+  - `scripts` - `wallpaper.sh`, `bar.sh` (starts the notch)
+
+## Notch keys (Hyprland)
+
+| Keys | Opens |
+| ---- | ----- |
+| `Super + D` | Control Centre |
+| `Super + R` | Launcher actions (`>` actions, `@` windows, `#` clipboard, sums, timers) |
+| `Super + Tab` | Workspace map |
+| `Super + D` → Island | Notch / island |
+| `Super + H/J/K/L` | In the launcher: switch mode / move |
 
 ## Installation
 
