@@ -230,17 +230,79 @@ for key, d in pairs(grow) do
     bind("ALT + SHIFT + " .. key,        hl.dsp.window.move({ x = d[1] * 4, y = d[2] * 4, relative = true }), { repeating = true })
 end
 
--- Equalize: every tiled window's split back to 50/50 (splits with no direct window child stay)
+-- Balance (bspwm's -B): every tiled window gets the same area, keeping the
+-- arrangement. Dwindle has no such command and its ratios only reach a
+-- window's direct parent, so the split tree is read back from the windows'
+-- geometry instead: top-down, each separator is moved (by resizing a window
+-- that borders it) to where its two sides get space in proportion to their
+-- window counts.
+local function balance(wsid)
+    local function rects()
+        local out = {}
+        for _, w in ipairs(hl.get_workspace_windows(tostring(wsid))) do
+            if not w.floating and not w.hidden then
+                out[#out + 1] = { w = w, x = w.at.x, y = w.at.y, r = w.at.x + w.size.x, b = w.at.y + w.size.y }
+            end
+        end
+        return out
+    end
+    local function fresh(group) -- same windows, current geometry
+        local by, out = {}, {}
+        for _, g in ipairs(rects()) do by[g.w.address] = g end
+        for _, g in ipairs(group) do out[#out + 1] = by[g.w.address] end
+        return out
+    end
+    -- The cut that splits `group` in two along an axis, if one exists
+    local function cut(group, lo, hi)
+        table.sort(group, function(a, b) return a[lo] < b[lo] end)
+        for i = 1, #group - 1 do
+            local edge = 0
+            for j = 1, i do edge = math.max(edge, group[j][hi]) end
+            if edge <= group[i + 1][lo] then
+                local a, b = {}, {}
+                for j, g in ipairs(group) do if j <= i then a[#a + 1] = g else b[#b + 1] = g end end
+                return a, b, edge
+            end
+        end
+    end
+    local function solve(group)
+        if #group < 2 then return end
+        local x0, y0, x1, y1 = math.huge, math.huge, -math.huge, -math.huge
+        for _, g in ipairs(group) do
+            x0, y0 = math.min(x0, g.x), math.min(y0, g.y)
+            x1, y1 = math.max(x1, g.r), math.max(y1, g.b)
+        end
+        -- Dwindle splits a box along its longer side, so try that cut first
+        local axes = (x1 - x0 >= y1 - y0) and { { "x", "r" }, { "y", "b" } } or { { "y", "b" }, { "x", "r" } }
+        for _, ax in ipairs(axes) do
+            local a, b, edge = cut(group, ax[1], ax[2])
+            if a then
+                local start, size = ax[1] == "x" and x0 or y0, ax[1] == "x" and (x1 - x0) or (y1 - y0)
+                local delta = math.floor(start + size * #a / #group - edge + 0.5)
+                if math.abs(delta) > 1 then
+                    for _, g in ipairs(a) do
+                        if g[ax[2]] == edge then -- borders the separator: growing it moves the separator
+                            hl.dispatch(hl.dsp.focus({ window = g.w }))
+                            hl.dispatch(hl.dsp.window.resize(ax[1] == "x" and { x = delta, y = 0, relative = true }
+                                or { x = 0, y = delta, relative = true }))
+                            break
+                        end
+                    end
+                end
+                solve(fresh(a))
+                solve(fresh(b))
+                return
+            end
+        end
+    end
+    solve(rects())
+end
+
 bind("SUPER + b", function()
     local active = hl.get_active_window()
     if not active or not active.workspace then return end
     local cursor = hl.get_cursor_pos()
-    for _, w in ipairs(hl.get_workspace_windows(active.workspace)) do
-        if not w.floating then
-            hl.dispatch(hl.dsp.focus({ window = w }))
-            hl.dispatch(hl.dsp.layout("splitratio 1 exact"))
-        end
-    end
+    balance(active.workspace.id)
     hl.dispatch(hl.dsp.focus({ window = active }))
     if cursor then hl.dispatch(hl.dsp.cursor.move({ x = cursor.x, y = cursor.y })) end
 end)
