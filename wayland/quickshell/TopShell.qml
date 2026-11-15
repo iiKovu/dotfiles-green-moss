@@ -279,7 +279,6 @@ Scope {
                         iconColor: Colors.accent
                         hpad: 7
                         onClicked: ShellState.togglePanel("launcher")
-                        onScrolled: function (d) { ShellState.nudgeVolume(d); }
                     }
 
                     // The workspace indicator TRAVELS.
@@ -1014,28 +1013,6 @@ Scope {
                             if (m.button === Qt.RightButton && ShellState.player)
                                 ShellState.player.isPlaying ? ShellState.player.pause() : ShellState.player.play();
                             else ShellState.togglePanel("control");
-                        }
-                        // Two axes, two things. The vertical one was all there was
-                        // and it is unchanged (volume); the horizontal one did
-                        // nothing and now switches workspace. The absolute values
-                        // are compared to decide which wins: a touchpad always sends
-                        // something on both axes, and without this a vertical
-                        // gesture a hair off course would switch your workspace as
-                        // you turned the volume up.
-                        // Only with the notch at rest: with a panel open the wheel
-                        // belongs to the panel (a scrolling list, a drag).
-                        onWheel: function (w) {
-                            const dx = w.angleDelta.x, dy = w.angleDelta.y;
-                            if (Math.abs(dx) > Math.abs(dy)) {
-                                // The workspace gesture only with the notch at rest:
-                                // with a panel open the wheel belongs to the panel.
-                                if (!ShellState.open) ShellState.scrollWorkspace(dx);
-                                return;
-                            }
-                            // The `dy !== 0` is not superfluous: `dy > 0 ? 1 : -1`
-                            // turns a zero into -1, so a purely horizontal gesture
-                            // turned the volume down without anyone asking.
-                            if (dy !== 0) ShellState.nudgeVolume(dy > 0 ? 1 : -1);
                         }
                     }
 

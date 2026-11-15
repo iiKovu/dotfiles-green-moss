@@ -567,59 +567,7 @@ Singleton {
         sink.audio.muted = false;
         sink.audio.volume = Math.max(0, Math.min(1.4, pct / 100));
     }
-    function nudgeVolume(dir) {
-        if (!sink || !sink.audio) return;
-        // Unmutes, same as setVolume. Without this, the wheel over the notch
-        // with the sound muted left the bar pinned at 0 while the real level
-        // climbed behind its back up to 140%: you unmuted and got slapped in
-        // the face. Moving the volume IS asking to hear.
-        sink.audio.muted = false;
-        sink.audio.volume = Math.max(0, Math.min(1.4, sink.audio.volume + dir * 0.02));
-    }
     function toggleMute() { if (sink && sink.audio) sink.audio.muted = !sink.audio.muted; }
-
-    // ═══════════════════ horizontal wheel over the notch ═══════════════════
-    // Swiping over the island does something,
-    // but there the gesture changes FACE and here that does not fit: in this
-    // shell each face comes from a specific state or button, not from a
-    // carousel. What was going spare was the horizontal axis, which did
-    // nothing. Now it changes workspace.
-    //
-    // Two details that set it apart from "subtract and add one":
-    //
-    // · IT ACCUMULATES. A touchpad does not send one event per gesture, it sends
-    //   a burst of dozens; without accumulating, a short drag would take you
-    //   across all ten workspaces at once. 120 is the equivalent of one wheel
-    //   notch, which is the unit Qt uses for "one step".
-    //
-    // · IT GOES TO `e+1`, NOT TO `id+1`. It is exactly what the vertical wheel
-    //   with Super does in hyprland.lua: it jumps to the next workspace that
-    //   EXISTS. Adding to the id would drop you into empty workspaces you had
-    //   not created, and the overview map shows them anyway.
-    property real wsAccum: 0
-    Timer { id: wsAccumReset; interval: 350; onTriggered: root.wsAccum = 0 }
-
-    function scrollWorkspace(dx) {
-        root.wsAccum += dx;
-        wsAccumReset.restart();
-        while (Math.abs(root.wsAccum) >= 120) {
-            const dir = root.wsAccum > 0 ? 1 : -1;
-            root.wsAccum -= dir * 120;
-            // `e+1` goes IN QUOTES. Since 0.55 the argument to `dispatch` is
-            // a Lua expression (see the long note in OverviewPanel.qml), and
-            // there the workspace target is of two kinds depending on what you
-            // ask for: a bare number for "go to 3", but a STRING for symbolic
-            // targets such as `e+1`. Without the quotes, Lua reads `e` as a
-            // variable that does not exist and blows up with a syntax error.
-            Hyprland.dispatch('hl.dsp.focus({ workspace = "e' + (dir > 0 ? "+1" : "-1") + '" })');
-            // The flash is requested AT ONCE, without waiting for Hyprland to
-            // answer: the face reads the active workspace through a live binding,
-            // so if the first frame arrives with the old number it corrects
-            // itself on the next one, and that happens inside the entry
-            // animation itself.
-            root.flash("ws");
-        }
-    }
 
     readonly property int activeWs: Hyprland.focusedWorkspace ? Hyprland.focusedWorkspace.id : 1
 
