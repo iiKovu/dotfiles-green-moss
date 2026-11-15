@@ -5,7 +5,14 @@ local shots = home .. "/Documents/Pictures/screenshots"
 local function bind(keys, dsp, opts) hl.bind(keys, dsp, opts) end
 local function exec(cmd) return hl.dsp.exec_cmd(cmd) end
 
--- Windows on the hidden scratchpad
+-- Hidden windows
+local origin = {}
+local function hide(w)
+    if not w or not w.workspace then return end
+    origin[w.address] = w.workspace.id
+    hl.dispatch(hl.dsp.window.move({ window = w, workspace = "special:hidden", follow = false }))
+end
+
 local function hidden_windows()
     local out = {}
     for _, w in ipairs(hl.get_windows()) do
@@ -14,12 +21,12 @@ local function hidden_windows()
     return out
 end
 
--- Quickshell notch call (presets with a quickshell.json); without the notch, run fallback
+-- Quickshell notch call
 local function notch(call, fallback)
     return function()
-        local p = io.popen("pgrep -x quickshell") -- os.execute has no exit status in Hyprland
-        local running = p:read("*a") ~= ""
-        p:close()
+        local p = io.popen("pgrep -x quickshell")
+        local running = p ~= nil and p:read("*a") ~= ""
+        if p then p:close() end
         if running then
             hl.exec_cmd("qs ipc call notch " .. call)
         elseif fallback then
@@ -28,14 +35,12 @@ local function notch(call, fallback)
     end
 end
 
-------------------------------
----- WM-independent keys  ----
-------------------------------
+-- WM-independent keys
 
 bind("SUPER + Escape", exec("hyprctl reload"))
 bind("SUPER + Return", exec("kitty"))
 
--- Floating kitty: open, hide, or bring back to the current workspace
+-- Floating kitty
 bind("SUPER + SHIFT + Return", function()
     local term
     for _, w in ipairs(hl.get_windows()) do
@@ -47,8 +52,9 @@ bind("SUPER + SHIFT + Return", function()
     end
     local current = hl.get_active_workspace()
     if term.workspace and current and term.workspace.id == current.id then
-        hl.dispatch(hl.dsp.window.move({ window = term, workspace = "special:hidden", follow = false }))
+        hide(term)
     else
+        origin[term.address] = nil
         hl.dispatch(hl.dsp.window.move({ window = term, workspace = current, follow = false }))
         hl.dispatch(hl.dsp.focus({ window = term }))
     end
@@ -58,8 +64,8 @@ bind("SUPER + space",         exec("rofi -show drun"))
 bind("SUPER + SHIFT + space", exec("rofi -show run"))
 bind("SUPER + z",             exec("rofi-pass"))
 bind("SUPER + x",             exec(home .. "/.config/rofi/powermenu/powermenu.sh"))
-bind("SUPER + d",             notch("control"))  -- Control Centre
-bind("SUPER + r",             notch("launcher")) -- actions (>), windows (@), sums, timers
+bind("SUPER + d",             notch("control"))
+bind("SUPER + r",             notch("launcher"))
 bind("SUPER + e",             exec("kitty -e yazi"))
 bind("SUPER + o",             exec("obsidian"))
 bind("SUPER + n",             exec("notify-send 'Hey, this is a test' 'This is a test as well'"))
@@ -82,9 +88,7 @@ bind("XF86AudioPrev",        exec("playerctl -p spotify,%any previous"),   { loc
 bind("XF86AudioPlay",        exec("playerctl -p spotify,%any play-pause"), { locked = true })
 bind("XF86AudioNext",        exec("playerctl -p spotify,%any next"),       { locked = true })
 
----------------------
----- Window mgmt ----
----------------------
+-- Window management
 
 bind("SUPER + SHIFT + r", exec("hyprctl reload"))
 bind("SUPER + w",         hl.dsp.window.close())
@@ -124,13 +128,18 @@ bind("SUPER + SHIFT + t", hl.dsp.window.pseudo())
 bind("SUPER + s",         hl.dsp.window.float())
 bind("SUPER + f",         hl.dsp.window.fullscreen())
 
--- Flags: hidden (special:hidden) and sticky (pin, floating only). locked/private/marked have no equivalent.
-bind("SUPER + ALT + g", hl.dsp.window.move({ workspace = "special:hidden", follow = false }))
+-- Flags: hidden, sticky, and unhide function
+bind("SUPER + ALT + g", function() hide(hl.get_active_window()) end)
 bind("SUPER + ALT + b", hl.dsp.window.pin())
 bind("SUPER + ALT + u", function()
     local current = hl.get_active_workspace()
+    if not current then return end
     for _, w in ipairs(hidden_windows()) do
-        hl.dispatch(hl.dsp.window.move({ window = w, workspace = current, follow = false }))
+        local o = origin[w.address]
+        if o == nil or o == current.id then
+            origin[w.address] = nil
+            hl.dispatch(hl.dsp.window.move({ window = w, workspace = current, follow = false }))
+        end
     end
 end)
 
@@ -144,9 +153,8 @@ for key, dir in pairs(dirs) do
     bind("SUPER + SHIFT + " .. key, hl.dsp.window.swap({ direction = dir }), { repeating = true })
 end
 
--- Preselection. Dwindle draws no area, so the target window gets the "presel" tag
--- (hyprland.lua colors its border) until a window lands there or it's canceled.
-local presel -- target window address
+-- Preselection
+local presel
 local function clear_presel()
     if presel then hl.dispatch(hl.dsp.window.tag({ tag = "-presel", window = "address:" .. presel })) end
     presel = nil
@@ -161,15 +169,14 @@ for key, dir in pairs(dirs) do
         presel = w.address
     end)
 end
--- Cancel (any non-direction resets dwindle's override)
+-- Cancel
 bind("SUPER + ALT + space", function()
     hl.dispatch(hl.dsp.layout("preselect x"))
     clear_presel()
 end)
 hl.on("window.open", clear_presel)
 
--- Move the focused window into the preselection (bspc node -n newest.!automatic.local):
--- park it, focus the target so dwindle splits there, bring it back
+-- Move the focused window into the preselection
 bind("SUPER + y", function()
     local w = hl.get_active_window()
     if not presel or not w or w.address == presel then return end
@@ -185,7 +192,7 @@ bind("SUPER + y", function()
     clear_presel()
 end)
 
--- Next/previous window (monocle needs its own layout message)
+-- Next/previous window
 local function cycle(prev)
     local ws = hl.get_active_workspace()
     if ws and ws.tiled_layout == "monocle" then
@@ -197,12 +204,12 @@ end
 bind("SUPER + c",         function() cycle(false) end, { repeating = true })
 bind("SUPER + SHIFT + c", function() cycle(true) end, { repeating = true })
 
--- Prev/next workspace of this monitor, empty ones included, wrapping (bspc desktop -f prev.local)
+-- Prev/next workspace of this monitor
 local ranges = { ["DP-2"] = { 1, 5 }, ["DP-1"] = { 6, 7 }, ["HDMI-A-1"] = { 8, 9 } }
 local function step(delta)
     local ws = hl.get_active_workspace()
     local r = ws and ws.monitor and ranges[ws.monitor.name]
-    if not r then return hl.dispatch(hl.dsp.focus({ workspace = delta > 0 and "m+1" or "m-1" })) end
+    if not ws or not r then return hl.dispatch(hl.dsp.focus({ workspace = delta > 0 and "m+1" or "m-1" })) end
     local id = ws.id + delta
     if id > r[2] then id = r[1] elseif id < r[1] then id = r[2] end
     hl.dispatch(hl.dsp.focus({ workspace = id }))
@@ -217,9 +224,7 @@ for i = 1, 9 do
     bind("SUPER + SHIFT + " .. i, hl.dsp.window.move({ workspace = i, follow = false }))
 end
 
----------------------
----- Move/Resize ----
----------------------
+-- Move/Resize
 
 -- Expand or contract
 local grow = { h = { -20, 0 }, l = { 20, 0 }, j = { 0, 20 }, k = { 0, -20 } }
@@ -230,12 +235,7 @@ for key, d in pairs(grow) do
     bind("ALT + SHIFT + " .. key,        hl.dsp.window.move({ x = d[1] * 4, y = d[2] * 4, relative = true }), { repeating = true })
 end
 
--- Balance (bspwm's -B): every tiled window gets the same area, keeping the
--- arrangement. Dwindle has no such command and its ratios only reach a
--- window's direct parent, so the split tree is read back from the windows'
--- geometry instead: top-down, each separator is moved (by resizing a window
--- that borders it) to where its two sides get space in proportion to their
--- window counts.
+-- Balance function
 local function balance(wsid)
     local function rects()
         local out = {}
@@ -246,13 +246,12 @@ local function balance(wsid)
         end
         return out
     end
-    local function fresh(group) -- same windows, current geometry
+    local function fresh(group)
         local by, out = {}, {}
         for _, g in ipairs(rects()) do by[g.w.address] = g end
         for _, g in ipairs(group) do out[#out + 1] = by[g.w.address] end
         return out
     end
-    -- The cut that splits `group` in two along an axis, if one exists
     local function cut(group, lo, hi)
         table.sort(group, function(a, b) return a[lo] < b[lo] end)
         for i = 1, #group - 1 do
@@ -272,7 +271,6 @@ local function balance(wsid)
             x0, y0 = math.min(x0, g.x), math.min(y0, g.y)
             x1, y1 = math.max(x1, g.r), math.max(y1, g.b)
         end
-        -- Dwindle splits a box along its longer side, so try that cut first
         local axes = (x1 - x0 >= y1 - y0) and { { "x", "r" }, { "y", "b" } } or { { "y", "b" }, { "x", "r" } }
         for _, ax in ipairs(axes) do
             local a, b, edge = cut(group, ax[1], ax[2])
@@ -281,7 +279,7 @@ local function balance(wsid)
                 local delta = math.floor(start + size * #a / #group - edge + 0.5)
                 if math.abs(delta) > 1 then
                     for _, g in ipairs(a) do
-                        if g[ax[2]] == edge then -- borders the separator: growing it moves the separator
+                        if g[ax[2]] == edge then
                             hl.dispatch(hl.dsp.focus({ window = g.w }))
                             hl.dispatch(hl.dsp.window.resize(ax[1] == "x" and { x = delta, y = 0, relative = true }
                                 or { x = 0, y = delta, relative = true }))
