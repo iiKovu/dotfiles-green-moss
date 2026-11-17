@@ -308,3 +308,7 @@ end)
 -- Mouse: Alt + LMB move, Alt + RMB resize
 bind("ALT + mouse:272", hl.dsp.window.drag(),   { mouse = true })
 bind("ALT + mouse:273", hl.dsp.window.resize(), { mouse = true })
+
+-- Discord
+bind("code:191",   hl.dsp.global("discord:discord-toggle-mute"))
+bind("CTRL + F12", hl.dsp.global("discord:discord-toggle-deafen"))
