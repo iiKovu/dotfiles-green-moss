@@ -2,6 +2,15 @@
 
 . ~/.config/themes/current/preset.sh
 
+# Restart hyprpaper if it runs with a dead IPC socket
+if pgrep -x hyprpaper >/dev/null && ! hyprctl hyprpaper listactive >/dev/null 2>&1; then
+    sleep 0.5
+    if ! hyprctl hyprpaper listactive >/dev/null 2>&1; then
+        pkill -x hyprpaper
+        setsid -f hyprpaper >/dev/null 2>&1
+    fi
+fi
+
 # Wait for hyprpaper's IPC (autostart launches both at once)
 i=0
 until hyprctl hyprpaper listactive >/dev/null 2>&1 || [ $i -ge 50 ]; do

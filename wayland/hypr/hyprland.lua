@@ -160,6 +160,19 @@ hl.window_rule({
     border_size  = 3,
 })
 
+-- Color picker overlay
+hl.window_rule({
+    name  = "pickcolor",
+    match = { class = "^pickcolor$" },
+    float = true,
+    pin   = true,
+    border_size = 0,
+    rounding    = 0,
+    no_blur     = true,
+    no_shadow   = true,
+    no_dim      = true,
+})
+
 hl.window_rule({
     name  = "fix-xwayland-drags",
     match = { class = "^$", title = "^$", xwayland = true, float = true, fullscreen = false, pin = false },

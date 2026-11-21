@@ -13,6 +13,7 @@ Singleton {
     readonly property string batt: "󰁹"
     readonly property string battCharging: "󰂄"
     readonly property string battHealth: "󱈏" // md-battery-heart-variant U+F120F
+    readonly property string headset: "󰋋"   // md-headphones U+F02CB
     readonly property string moon: "󰖔"
     readonly property string reading: "󰗚"    // md-book-open-page-variant U+F05DA
     readonly property string wifi: "󰖩"

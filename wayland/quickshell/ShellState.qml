@@ -957,6 +957,17 @@ Singleton {
         const display = UPower.displayDevice;
         return (display && display.isPresent) ? display : null;
     }
+    // Headset battery: the power_supply the blackctl driver registers only while
+    // the headset is on and linked, so null means "nothing to show".
+    readonly property var headsetDevice: {
+        const ds = UPower.devices ? UPower.devices.values : [];
+        for (let i = 0; i < ds.length; i++)
+            if (ds[i] && String(ds[i].nativePath).indexOf("blackctl") >= 0) return ds[i];
+        return null;
+    }
+    readonly property int headsetPercent: headsetDevice ? Math.round(headsetDevice.percentage * 100) : -1
+    readonly property bool headsetCharging: headsetDevice !== null
+        && headsetDevice.state === UPowerDeviceState.Charging
     readonly property real battHealth: batteryDevice && batteryDevice.ready
         && batteryDevice.healthSupported ? batteryDevice.healthPercentage : -1
     readonly property real battFullWh: batteryDevice && batteryDevice.ready

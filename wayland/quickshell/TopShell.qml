@@ -658,6 +658,19 @@ Scope {
                         interactive: false
                     }
 
+                    // Headset battery (blackctl), only while the headset is on.
+                    // Click opens blackctl, or raises it if it is already open.
+                    BarItem {
+                        visible: ShellState.headsetDevice !== null
+                        icon: Icons.headset
+                        label: ShellState.headsetPercent + "%"
+                        iconColor: ShellState.headsetCharging ? Colors.accent : Colors.label
+                        onClicked: {
+                            const e = DesktopEntries.byId("blackctl");
+                            if (e) e.execute();
+                        }
+                    }
+
                     // The tray hides behind a toggle, like waybar's drawer: click
                     // the icon to slide the tray icons out, click again to fold them.
                     BarItem {
