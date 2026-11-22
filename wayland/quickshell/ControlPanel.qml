@@ -188,20 +188,22 @@ Item {
                 }
 
                 Toggle {
-                    icon: ShellState.dnd ? "󰂛" : "󰂚"; label: "Do not disturb"; idx: 0
-                    on: ShellState.dnd
-                    onActivated: ShellState.dnd = !ShellState.dnd
-                }
-                Toggle {
-                    icon: Icons.grid; label: "Workspaces"; idx: 1
+                    icon: Icons.grid; label: "Workspaces"; idx: 0
                     on: false
                     panel: "overview"
                 }
                 // Notch stuck to the top edge, or the floating island
                 Toggle {
-                    icon: "󰍜"; label: "Island"; idx: 2
+                    icon: "󰍜"; label: "Island"; idx: 1
                     on: Config.island
                     onActivated: Config.notchStyle = Config.island ? "notch" : "island"
+                }
+                // Bedroom lights: lit if either is on; opens LightsPanel with both
+                Toggle {
+                    readonly property bool any: ShellState.lights.high || ShellState.lights.low
+                    icon: any ? "󰌵" : "󰌶"; label: "Lights"; idx: 2
+                    on: false   // a door to LightsPanel, not a switch: neutral like Workspaces
+                    panel: "lights"
                 }
             }
 
@@ -222,6 +224,9 @@ Item {
                 // The three glyphs with percentages were indecipherable unless you
                 // knew by heart what each one meant. Now this is a door with a name:
                 // it keeps the quick glance and opens the graphs.
+                RowLayout {
+                Layout.fillWidth: true
+                spacing: 10
                 Rectangle {
                     id: performanceLink
                     Layout.fillWidth: true
@@ -270,6 +275,31 @@ Item {
                         cursorShape: Qt.PointingHandCursor
                         onClicked: ShellState.togglePanel("system")
                     }
+                }
+                // Do Not Disturb: same card style; accent fill when on
+                Rectangle {
+                    Layout.preferredWidth: 42
+                    Layout.preferredHeight: 42
+                    radius: 13
+                    color: ShellState.dnd ? Qt.rgba(Colors.accent.r, Colors.accent.g, Colors.accent.b, 0.42)
+                         : dndMa.containsMouse ? Colors.fill2 : Colors.fill3
+                    border.width: 1
+                    border.color: Colors.hairline
+                    Behavior on color { ColorAnimation { duration: Appearance.mQuick; easing.type: Easing.OutQuad } }
+                    Text {
+                        anchors.centerIn: parent
+                        text: ShellState.dnd ? Icons.bellOff : Icons.bell
+                        color: ShellState.dnd ? Colors.label : Colors.label3
+                        font.family: Appearance.font; font.pixelSize: Appearance.fsM
+                    }
+                    MouseArea {
+                        id: dndMa
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: ShellState.dnd = !ShellState.dnd
+                    }
+                }
                 }
 
             }

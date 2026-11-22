@@ -618,4 +618,12 @@ Item {
         origin: 1   // opens from the Control Centre, on the right
         CalendarPanel { anchors.fill: parent }
     }
+
+    // ─────────────── lights: bedroom lights ───────────────
+    NotchLayer {
+        anchors.fill: parent
+        active: root.mode === "lights"
+        origin: 1   // opens from the Control Centre's "Lights" toggle
+        LightsPanel { anchors.fill: parent }
+    }
 }

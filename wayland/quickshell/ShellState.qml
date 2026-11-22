@@ -36,7 +36,7 @@ Singleton {
     // The notch is the desktop's entry point: panels unfold from it.
     // "" = none. Adding a new one = one more value here, its size in
     // notchW/notchH, and its layer in NotchContent.qml.
-    property string panel: ""     // "" | "control" | "system" | "launcher" | "power" | "overview" | "calendar"
+    property string panel: ""     // "" | "control" | "system" | "launcher" | "power" | "overview" | "calendar" | "lights"
     readonly property bool open: panel !== ""
 
     function togglePanel(name) {
@@ -157,6 +157,7 @@ Singleton {
         : mode === "system" ? 920
         : mode === "power" ? 430
         : mode === "calendar" ? 350
+        : mode === "lights" ? 330
         : mode === "notif" ? 430
         : mode === "toast" ? 330
         : mode === "ws" ? 220
@@ -245,6 +246,7 @@ Singleton {
         : mode === "system" ? 420
         : mode === "power" ? 158
         : mode === "calendar" ? 320
+        : mode === "lights" ? 158
         : mode === "notif" ? 66
         : mode === "toast" ? 44
         : mode === "ws" ? 44
@@ -1842,5 +1844,48 @@ Singleton {
         ids.splice(t, 0, ids.splice(from, 1)[0]);
         Config.favApps = ids;
         Config.save();
+    }
+
+    // ──────────────── bedroom lights (Sonoff TX2C, eWeLink LAN) ─────────────────
+    // UI: the Control Centre's "Lights" toggle opens LightsPanel.qml (one button per gang).
+    // Backend: ~/Documents/scripts/common/lights.py (local, encrypted LAN API; config
+    // with the device key in ~/.config/lights/config.toml, not tracked). Every call prints the real state as
+    // JSON, so one Process both acts and re-syncs. State is read when the Control
+    // Centre opens; a click flips the toggle at once (optimistic) and the
+    // backend's answer corrects it if the switch disagreed.
+    readonly property string lightsBin: root.home + "/Documents/scripts/common/lights.py"
+    property var lights: ({ high: false, low: false })
+    property bool lightsOk: false
+    property var lightsPending: null
+    readonly property bool lightsBusy: lightsProc.running
+
+    function lightsRun(args): void {
+        if (lightsProc.running) { root.lightsPending = args; return; }
+        lightsProc.command = [root.lightsBin].concat(args);
+        lightsProc.running = true;
+    }
+    function setLight(name, on): void {
+        const l = Object.assign({}, root.lights); l[name] = on; root.lights = l;
+        root.lightsRun([on ? "on" : "off", name]);
+    }
+
+    Process {
+        id: lightsProc
+        stdout: SplitParser {
+            onRead: function (line) {
+                try { root.lights = JSON.parse(String(line)); root.lightsOk = true; }
+                catch (e) { root.lightsOk = false; }
+            }
+        }
+        onExited: function (code) {
+            if (code !== 0) root.lightsOk = false;
+            if (root.lightsPending) { const a = root.lightsPending; root.lightsPending = null; root.lightsRun(a); }
+        }
+    }
+    Connections {
+        target: root
+        function onPanelChanged() {
+            if (root.panel === "control" || root.panel === "lights") root.lightsRun(["status"]);
+        }
     }
 }
