@@ -120,16 +120,14 @@ Item {
                     // opacities multiply: it does not look smoother, it looks like it
                     // arrives late. The layer takes care of appearing; the cascade,
                     // only of getting into place. One gesture, one owner.
-                    property real ent: ShellState.mode === "control" ? 1 : 0
-                    Behavior on ent {
-                        SequentialAnimation {
-                            PauseAnimation { duration: ShellState.mode === "control" ? tg.idx * 32 : 0 }
-                            SpringAnimation {
-                                spring: Appearance.sprPanel
-                                damping: Appearance.dmpPanel
-                                epsilon: Appearance.eppScale
-                            }
-                        }
+                    property real ent: entS.value
+                    Spring {
+                        id: entS
+                        to: ShellState.mode === "control" ? 1 : 0
+                        delay: ShellState.mode === "control" ? tg.idx * 32 : 0
+                        spring: Appearance.sprPanel
+                        damping: Appearance.dmpPanel
+                        epsilon: Appearance.eppScale
                     }
                     scale: 0.82 + 0.18 * tg.ent
                     transform: Translate { y: (1 - tg.ent) * 12 }

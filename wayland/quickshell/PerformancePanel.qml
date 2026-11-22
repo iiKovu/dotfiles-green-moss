@@ -214,16 +214,14 @@ Item {
         border.width: 1
         border.color: Colors.hairline
 
-        property real ent: ShellState.mode === "system" ? 1 : 0
-        Behavior on ent {
-            SequentialAnimation {
-                PauseAnimation { duration: ShellState.mode === "system" ? card.idx * 32 : 0 }
-                SpringAnimation {
-                    spring: Appearance.sprPanel
-                    damping: Appearance.dmpPanel
-                    epsilon: Appearance.eppScale
-                }
-            }
+        property real ent: entS.value
+        Spring {
+            id: entS
+            to: ShellState.mode === "system" ? 1 : 0
+            delay: ShellState.mode === "system" ? card.idx * 32 : 0
+            spring: Appearance.sprPanel
+            damping: Appearance.dmpPanel
+            epsilon: Appearance.eppScale
         }
         scale: 0.92 + 0.08 * card.ent
         transform: Translate { y: (1 - card.ent) * 10 }

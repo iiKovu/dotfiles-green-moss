@@ -420,9 +420,8 @@ Scope {
                             // trailing one in mInScale, bouncing. While one waits
                             // for the other the pill is stretched — that stretch
                             // IS the effect. One target, two timings.
-                            property real lead: 0
-                            property real trail: 0
-                            onTargetChanged: { lead = target; trail = target; }
+                            property real lead: leadS.value
+                            property real trail: trailS.value
                             // SPRINGS, and here is why. With a fixed duration,
                             // switching workspace twice quickly in a row cut the
                             // journey short and restarted it from zero: the pill
@@ -437,12 +436,12 @@ Scope {
                             // pill.
                             // The leading edge shoots off as soon as the target
                             // changes.
-                            Behavior on lead {
-                                SpringAnimation {
-                                    spring: Appearance.sprTight
-                                    damping: Appearance.dmpTight
-                                    epsilon: Appearance.eppPx
-                                }
+                            Spring {
+                                id: leadS
+                                to: worm.target
+                                spring: Appearance.sprTight
+                                damping: Appearance.dmpTight
+                                epsilon: Appearance.eppPx
                             }
 
                             // The trailing one HOLDS ON AND THEN LETS GO, and that
@@ -465,22 +464,13 @@ Scope {
                             // the WHOLE journey, and on release the stiff spring
                             // with little damping gives the whiplash and the
                             // arrival tremor.
-                            Behavior on trail {
-                                SequentialAnimation {
-                                    PauseAnimation { duration: Appearance.mStagger }
-                                    SpringAnimation {
-                                        spring: Appearance.sprSquash
-                                        // Squash stiffness but panel damping, not
-                                        // squash damping. With 0.20 the trailing
-                                        // edge kept oscillating and the pill pulsed
-                                        // after arriving: a tremor is fine in the
-                                        // THICKNESS, where it reads as matter, and
-                                        // is a bug in the POSITION, where it reads
-                                        // as not knowing where to stop.
-                                        damping: Appearance.dmpPanel
-                                        epsilon: Appearance.eppPx
-                                    }
-                                }
+                            Spring {
+                                id: trailS
+                                to: worm.target
+                                delay: Appearance.mStagger
+                                spring: Appearance.sprSquash
+                                damping: Appearance.dmpPanel
+                                epsilon: Appearance.eppPx
                             }
 
                             // SQUASH & STRETCH. There is no separate "squash"
@@ -804,9 +794,13 @@ Scope {
                     // 1 = fully out. On a spring, so if the timer is cancelled
                     // while it is still coming out, it does not cut: it carries
                     // the movement back inwards with the velocity it had.
-                    property real reveal: on ? 1 : 0
-                    Behavior on reveal {
-                        SpringAnimation { spring: Appearance.sprPanel; damping: Appearance.dmpPanel; epsilon: Appearance.eppScale }
+                    property real reveal: revealS.value
+                    Spring {
+                        id: revealS
+                        to: bubble.on ? 1 : 0
+                        spring: Appearance.sprPanel
+                        damping: Appearance.dmpPanel
+                        epsilon: Appearance.eppScale
                     }
 
                     readonly property bool wide: bubbleMa.containsMouse || ShellState.bubbleAlert
@@ -814,8 +808,8 @@ Scope {
                     x: hiddenX + (shownX - hiddenX) * reveal
                     y: notch.gap + (root.barH - notch.gap - h) / 2
                     height: h
-                    width: h + (wide ? label.implicitWidth + 16 : 0)
-                    Behavior on width { SpringAnimation { spring: Appearance.sprTight; damping: Appearance.dmpTight; epsilon: Appearance.eppPx } }
+                    width: widthS.value
+                    Spring { id: widthS; to: bubble.h + (bubble.wide ? label.implicitWidth + 16 : 0) }
 
                     opacity: reveal
                     scale: 0.55 + 0.45 * reveal
@@ -929,8 +923,8 @@ Scope {
                     x: (surface.width - width) / 2
                     y: notch.gap
 
-                    property real nw: win.faceW
-                    property real nh: win.faceH
+                    property real nw: nwS.value
+                    property real nh: nhS.value
                     // Both axes used to share the SAME duration and the same
                     // curve, and that is why the notch rescaled like a box
                     // instead of deforming. Now each axis has its own spring:
@@ -941,8 +935,8 @@ Scope {
                     // and rb (the rounding of the bottom corners) is computed
                     // from height too, so the shape curves by itself along the
                     // way.
-                    Behavior on nw { SpringAnimation { spring: Appearance.sprTight; damping: Appearance.dmpTight; epsilon: Appearance.eppPx } }
-                    Behavior on nh { SpringAnimation { spring: Appearance.sprLoose; damping: Appearance.dmpLoose; epsilon: Appearance.eppPx } }
+                    Spring { id: nwS; to: win.faceW }
+                    Spring { id: nhS; to: win.faceH; spring: Appearance.sprLoose; damping: Appearance.dmpLoose }
 
                     readonly property real fl: root.flare
                     readonly property real rb: Math.max(6, Math.min(root.roundMax, height - fl - 1))

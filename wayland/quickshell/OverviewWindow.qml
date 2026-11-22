@@ -148,8 +148,8 @@ Item {
     // The lift on grabbing. It is not decoration: it is what separates "I am
     // dragging this" from "the mouse is passing over". It is on a spring so
     // that on release it settles instead of cutting off.
-    property real lift: dragging ? 1.07 : (pressed ? 0.97 : 1)
-    Behavior on lift { SpringAnimation { spring: Appearance.sprTight; damping: Appearance.dmpTight; epsilon: Appearance.eppScale } }
+    property real lift: liftS.value
+    Spring { id: liftS; to: dragging ? 1.07 : (pressed ? 0.97 : 1); epsilon: Appearance.eppScale }
     scale: lift
     transformOrigin: Item.Center
 

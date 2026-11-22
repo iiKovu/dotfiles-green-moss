@@ -39,9 +39,15 @@ Item {
                 anchors.centerIn: parent
                 width: 166; height: 166; radius: 83
                 color: Qt.rgba(root.accent.r, root.accent.g, root.accent.b, 0.10)
-                scale: ShellState.player && ShellState.player.isPlaying ? 1 : 0.94
+                scale: haloS.value
                 opacity: ShellState.player && ShellState.player.isPlaying ? 1 : 0.45
-                Behavior on scale { SpringAnimation { spring: Appearance.sprPanel; damping: Appearance.dmpPanel; epsilon: Appearance.eppScale } }
+                Spring {
+                    id: haloS
+                    to: ShellState.player && ShellState.player.isPlaying ? 1 : 0.94
+                    spring: Appearance.sprPanel
+                    damping: Appearance.dmpPanel
+                    epsilon: Appearance.eppScale
+                }
                 Behavior on opacity { NumberAnimation { duration: Appearance.mIn; easing.type: Easing.OutCubic } }
                 Behavior on color { ColorAnimation { duration: Appearance.mIn; easing.type: Easing.OutCubic } }
             }
@@ -270,9 +276,9 @@ Item {
                         color: transportMa.containsMouse
                             ? Qt.rgba(root.accent.r, root.accent.g, root.accent.b, 0.34)
                             : Qt.rgba(root.accent.r, root.accent.g, root.accent.b, 0.20)
-                        scale: transportMa.pressed ? 0.90 : 1
+                        scale: pressS.value
+                        Spring { id: pressS; to: transportMa.pressed ? 0.90 : 1; epsilon: Appearance.eppScale }
                         Behavior on color { ColorAnimation { duration: Appearance.mQuick; easing.type: Easing.OutQuad } }
-                        Behavior on scale { SpringAnimation { spring: Appearance.sprTight; damping: Appearance.dmpTight; epsilon: Appearance.eppScale } }
                     }
 
                     Text {

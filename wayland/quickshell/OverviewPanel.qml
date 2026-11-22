@@ -452,17 +452,15 @@ Item {
         // if you switch workspace with the overview open, the frame TRAVELS the
         // path, so you see where you are coming from.
         Rectangle {
-            property real tx: root.wsX(root.activeWs)
-            property real ty: root.wsY(root.activeWs)
-            x: tx; y: ty
+            x: xS.value; y: yS.value
+            Spring { id: xS; to: root.wsX(root.activeWs) }
+            Spring { id: yS; to: root.wsY(root.activeWs) }
             width: root.cellW; height: root.cellH
             color: "transparent"
             radius: root.radIn
             border.width: 2
             border.color: Colors.accent
             z: 200
-            Behavior on x { SpringAnimation { spring: Appearance.sprTight; damping: Appearance.dmpTight; epsilon: Appearance.eppPx } }
-            Behavior on y { SpringAnimation { spring: Appearance.sprTight; damping: Appearance.dmpTight; epsilon: Appearance.eppPx } }
         }
 
         // Keyboard selection frame. It only appears when the selection moves

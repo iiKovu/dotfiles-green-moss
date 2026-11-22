@@ -48,30 +48,26 @@ Item {
         }
     }
 
-    scale: active ? 1 : Appearance.mScaleFrom
-    Behavior on scale {
-        SequentialAnimation {
-            PauseAnimation { duration: layer.active ? Appearance.mStagger : 0 }
-            SpringAnimation {
-                spring: Appearance.sprPanel
-                damping: Appearance.dmpPanel
-                epsilon: Appearance.eppScale
-            }
-        }
+    scale: scaleS.value
+    Spring {
+        id: scaleS
+        to: layer.active ? 1 : Appearance.mScaleFrom
+        delay: layer.active ? Appearance.mStagger : 0
+        spring: Appearance.sprPanel
+        damping: Appearance.dmpPanel
+        epsilon: Appearance.eppScale
     }
 
     // The sideways travel. On the way out it goes back towards its side, so a
     // face withdraws the way it came: the gesture reads the same going as coming.
-    property real slide: active ? 0 : origin * Appearance.mTravel
-    Behavior on slide {
-        SequentialAnimation {
-            PauseAnimation { duration: layer.active ? Appearance.mStagger : 0 }
-            SpringAnimation {
-                spring: Appearance.sprPanel
-                damping: Appearance.dmpPanel
-                epsilon: Appearance.eppPx
-            }
-        }
+    property real slide: slideS.value
+    Spring {
+        id: slideS
+        to: layer.active ? 0 : layer.origin * Appearance.mTravel
+        delay: layer.active ? Appearance.mStagger : 0
+        spring: Appearance.sprPanel
+        damping: Appearance.dmpPanel
+        epsilon: Appearance.eppPx
     }
     transform: Translate { x: layer.slide }
 }
