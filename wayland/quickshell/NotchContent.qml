@@ -81,33 +81,6 @@ Item {
             }
         }
 
-        // ---- right pole at rest: battery ----
-        Row {
-            anchors { right: parent.right; rightMargin: 15; verticalCenter: parent.verticalCenter }
-            spacing: 6
-            opacity: (Config.showBattery && !ShellState.mediaLive && ShellState.batt >= 0) ? 1 : 0
-            visible: opacity > 0.01
-            Behavior on opacity { NumberAnimation { duration: Appearance.mIn; easing.type: Easing.OutCubic } }
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: ShellState.battIcon
-                color: ShellState.ac ? Colors.ok
-                    : ShellState.batt < 15 ? Colors.crit
-                    : ShellState.batt < 30 ? Colors.warn : Colors.label
-                font.family: Appearance.font; font.pixelSize: Appearance.fsM
-            }
-            Text {
-                anchors.verticalCenter: parent.verticalCenter
-                text: ShellState.batt + "%"
-                color: ShellState.ac ? Colors.ok
-                    : ShellState.batt < 15 ? Colors.crit
-                    : ShellState.batt < 30 ? Colors.warn : Colors.label
-                font.family: Appearance.fontUI
-                font.pixelSize: Appearance.fsXS
-                font.weight: Font.Medium
-                font.features: ({ "tnum": 1 })   // the % must not change width as the charge drops
-            }
-        }
 
         // ---- right pole with music: cover art + peaks ----
         Row {

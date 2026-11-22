@@ -215,11 +215,10 @@ Singleton {
         return root.launcherChrome + calc + favs + rows + vacio;
     }
 
-    // Config.idleW is the width for the time ALONE. If you turn the date or the
-    // battery back on in Config.qml, the notch widens by itself.
+    // Config.idleW is the width for the time ALONE. If you turn the date
+    // back on in Config.qml, the notch widens by itself.
     readonly property int idleW: Config.idleW
         + (Config.showDate ? 92 : 0)
-        + (Config.showBattery ? 64 : 0)
     // PANEL FACES ADD THE ISLAND GAP; NOTICE FACES DO NOT, AND IT IS NOT AN
     // OVERSIGHT.
     //

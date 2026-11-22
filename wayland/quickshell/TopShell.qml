@@ -648,6 +648,17 @@ Scope {
                         interactive: false
                     }
 
+                    // Laptop battery
+                    BarItem {
+                        visible: Config.showBattery && ShellState.batt >= 0
+                        icon: ShellState.battIcon
+                        label: ShellState.batt + "%"
+                        iconColor: ShellState.ac ? Colors.ok
+                            : ShellState.batt < 15 ? Colors.crit
+                            : ShellState.batt < 30 ? Colors.warn : Colors.label
+                        interactive: false
+                    }
+
                     // Headset battery (blackctl), only while the headset is on.
                     // Click opens blackctl, or raises it if it is already open.
                     BarItem {
